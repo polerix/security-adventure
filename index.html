@@ -201,6 +201,211 @@
       color: var(--muted);
       font-size: 12px
     }
+
+    /* Game specific styles */
+    .module-nav {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .module-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      flex: 1;
+      min-width: 200px;
+      text-align: left;
+    }
+
+    .module-btn:hover {
+      border-color: var(--accent);
+      background: rgba(110, 231, 255, 0.05);
+    }
+
+    .module-btn strong {
+      display: block;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+
+    .module-btn .desc {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: normal;
+    }
+
+    #game-container {
+      margin-bottom: 24px;
+    }
+
+    .placeholder-text {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .game-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .animate-fade {
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .game-header {
+      color: var(--accent2);
+      margin-top: 0;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .scenario-image {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .scenario-text {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      white-space: pre-wrap;
+    }
+
+    .choices-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .choice-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .choice-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent);
+    }
+
+    .choice-btn .small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .result-box {
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 16px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .result-box.failure {
+      color: var(--bad);
+      border: 1px solid var(--bad);
+    }
+
+    .result-box.success {
+      color: var(--good);
+      border: 1px solid var(--good);
+    }
+
+    .result-box.neutral {
+      color: var(--warn);
+      border: 1px solid var(--warn);
+    }
+
+    .scorecard {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+
+    .scorecard h4 {
+      margin: 0 0 12px 0;
+      color: var(--accent);
+    }
+
+    .metrics {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .metric {
+      font-family: monospace;
+    }
+
+    .badges-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .badge-pill {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--warn);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .game-btn.secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      cursor: pointer;
+    }
+
+    .game-btn.secondary:hover {
+      border-color: var(--text);
+      color: var(--text);
+    }
   </style>
 </head>
 
@@ -226,6 +431,22 @@
         Repo: <a href="https://github.com/polerix/SecurityAdventure">polerix/SecurityAdventure</a>
       </div>
     </header>
+
+    <!-- Training Modules Section -->
+    <nav class="module-nav">
+      <button class="module-btn" onclick="game.startModule('module1')">
+        <strong>Module 1</strong>
+        <span class="desc">The Curious Case of the Lost Drive</span>
+      </button>
+      <button class="module-btn" onclick="game.startModule('module2')">
+        <strong>Module 2</strong>
+        <span class="desc">The Doorway Dilemma</span>
+      </button>
+    </nav>
+
+    <div id="game-container">
+      <div class="placeholder-text">Select a training module above to begin.</div>
+    </div>
 
     <div class="grid">
       <section class="card">
@@ -392,6 +613,7 @@
       Generated as an overview index page.
     </footer>
   </div>
+  <script src="game.js"></script>
 </body>
 
 </html>
