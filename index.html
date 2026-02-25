@@ -282,6 +282,44 @@
       transform: rotate(90deg);
     }
 
+    /* Comic Cutout Coupon Cartouche */
+    .comic-coupon {
+      position: relative;
+      margin: 20px 0;
+      padding: 24px;
+      border: 3px dashed var(--border);
+      border-radius: 16px;
+      background: var(--panel-bg);
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .comic-coupon .scissors {
+      position: absolute;
+      top: -14px;
+      right: 32px;
+      font-size: 24px;
+      background: var(--bg);
+      padding: 0 4px;
+      transform: rotate(20deg);
+      border-radius: 8px;
+      /* Hide dashed line underneath */
+    }
+
+    [data-theme="comic"] .comic-coupon {
+      background: var(--dc-process-cyan);
+      /* Solid blue inside */
+      border-color: var(--dc-process-black);
+      box-shadow: 6px 6px 0px var(--dc-process-black);
+    }
+
+    [data-theme="comic"] .comic-coupon .scissors {
+      background: transparent;
+      text-shadow: 1px 1px 0px var(--dc-process-black);
+    }
+
     details>summary:hover::before {
       color: var(--accent);
     }
@@ -601,29 +639,34 @@
         <img src="assets/banner_intro.png" data-src-en="assets/banner_intro.png"
           data-src-fr="assets/fr_banner_intro.png" alt="Smarty the Fox Greeting"
           style="width:65%;height:auto;border-radius:12px;margin-bottom:14px;">
-        <h1>SecurityAdventure</h1>
-        <div class="sub" data-i18n="hero_sub">
-          A small “what-if” engine for security stories: write scenarios as structured nodes, compile them, validate
-          them,
-          and run them as a playable adventure (web, CLI, or both).
+
+        <div class="comic-coupon">
+          <span class="scissors">✂️</span>
+          <h1>SecurityAdventure</h1>
+          <div class="sub" data-i18n="hero_sub">
+            A small “what-if” engine for security stories: write scenarios as structured nodes, compile them, validate
+            them,
+            and run them as a playable adventure (web, CLI, or both).
+          </div>
+
+          <!-- Training Modules Section -->
+          <nav id="training-modules" class="module-nav">
+            <button class="module-btn" onclick="game.startModule('module1')">
+              <strong data-i18n="mod1_title">Module 1</strong>
+              <span class="desc" data-i18n="mod1_desc">The Curious Case of the Lost Drive</span>
+            </button>
+            <button class="module-btn" onclick="game.startModule('module2')">
+              <strong data-i18n="mod2_title">Module 2</strong>
+              <span class="desc" data-i18n="mod2_desc">The Doorway Dilemma</span>
+            </button>
+          </nav>
         </div>
+
       </div>
       <div class="note">
         Repo: <a href="https://github.com/polerix/SecurityAdventure">polerix/SecurityAdventure</a>
       </div>
     </header>
-
-    <!-- Training Modules Section -->
-    <nav id="training-modules" class="module-nav">
-      <button class="module-btn" onclick="game.startModule('module1')">
-        <strong data-i18n="mod1_title">Module 1</strong>
-        <span class="desc" data-i18n="mod1_desc">The Curious Case of the Lost Drive</span>
-      </button>
-      <button class="module-btn" onclick="game.startModule('module2')">
-        <strong data-i18n="mod2_title">Module 2</strong>
-        <span class="desc" data-i18n="mod2_desc">The Doorway Dilemma</span>
-      </button>
-    </nav>
 
     <div id="game-container">
       <div class="placeholder-text" data-i18n="placeholder">Select a training module above to begin.</div>
@@ -864,9 +907,9 @@
       const activeBtn = document.getElementById('lang-' + lang);
       if (activeBtn) {
         activeBtn.classList.add('active');
-        activeBtn.style.color = 'var(--text)';
-        activeBtn.style.borderColor = 'var(--text)';
-        activeBtn.style.background = 'rgba(255,255,255,0.05)';
+        activeBtn.style.color = 'var(--good)';
+        activeBtn.style.borderColor = 'var(--good)';
+        activeBtn.style.background = 'rgba(255, 255, 255, 0.05)';
       }
 
       // Translate DOM elements
