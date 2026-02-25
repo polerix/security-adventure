@@ -567,7 +567,8 @@
               style="cursor: pointer; background: transparent;">FR</button>
           </div>
         </div>
-        <img src="assets/banner_intro.png" alt="Smarty the Fox Greeting"
+        <img src="assets/banner_intro.png" data-src-en="assets/banner_intro.png"
+          data-src-fr="assets/fr_banner_intro.png" alt="Smarty the Fox Greeting"
           style="width:65%;height:auto;border-radius:12px;margin-bottom:14px;">
         <h1>SecurityAdventure</h1>
         <div class="sub" data-i18n="hero_sub">
@@ -603,7 +604,8 @@
           <summary>
             <h2>Step-by-step process (proposed)</h2>
           </summary>
-          <img src="assets/banner_process.png" alt="Nano Banana Step-by-step Process"
+          <img src="assets/banner_process.png" data-src-en="assets/banner_process.png"
+            data-src-fr="assets/fr_banner_process.png" alt="Nano Banana Step-by-step Process"
             style="width:65%;height:auto;border-radius:12px;margin:10px 0;">
           <ol>
             <li>
@@ -645,7 +647,8 @@
           <summary>
             <h3>Minimal node format</h3>
           </summary>
-          <img src="assets/banner_node_format.png" alt="Nano Banana Node Format"
+          <img src="assets/banner_node_format.png" data-src-en="assets/banner_node_format.png"
+            data-src-fr="assets/fr_banner_node.png" alt="Nano Banana Node Format"
             style="width:65%;height:auto;border-radius:12px;margin:10px 0;">
           <pre><code>{
   "id": "start",
@@ -661,7 +664,8 @@
           <summary>
             <h3>Pipeline sketch</h3>
           </summary>
-          <img src="assets/banner_pipeline.png" alt="Nano Banana Pipeline Sketch"
+          <img src="assets/banner_pipeline.png" data-src-en="assets/banner_pipeline.png"
+            data-src-fr="assets/fr_banner_pipeline.png" alt="Nano Banana Pipeline Sketch"
             style="width:65%;height:auto;border-radius:12px;margin:10px 0;">
           <div class="flow" role="img" aria-label="Author → compile → validate → run → export">
             <svg viewBox="0 0 980 140" width="980" height="140" style="max-width:100%;height:auto">
@@ -713,7 +717,8 @@
           <summary>
             <h3>Design goals (philosophy lab vibes)</h3>
           </summary>
-          <img src="assets/banner_design_goals.png" alt="Nano Banana Design Goals"
+          <img src="assets/banner_design_goals.png" data-src-en="assets/banner_design_goals.png"
+            data-src-fr="assets/fr_banner_goals.png" alt="Nano Banana Design Goals"
             style="width:65%;height:auto;border-radius:12px;margin:10px 0;">
           <ul>
             <li><span class="good">Citizens survive</span> by default: the world is coherent and self-consistent.</li>
@@ -742,7 +747,8 @@
           <summary>
             <h2>Suggested next files</h2>
           </summary>
-          <img src="assets/banner_next_files.png" alt="Nano Banana Next Files"
+          <img src="assets/banner_next_files.png" data-src-en="assets/banner_next_files.png"
+            data-src-fr="assets/fr_banner_files.png" alt="Nano Banana Next Files"
             style="width:65%;height:auto;border-radius:12px;margin:10px 0;">
           <div class="note">If this repo stays tiny, these are the pieces that make it feel “real” fast.</div>
           <ol>
@@ -758,7 +764,8 @@
           <summary>
             <h3>Open questions</h3>
           </summary>
-          <img src="assets/banner_questions.png" alt="Nano Banana Open Questions"
+          <img src="assets/banner_questions.png" data-src-en="assets/banner_questions.png"
+            data-src-fr="assets/fr_banner_questions.png" alt="Nano Banana Open Questions"
             style="width:65%;height:auto;border-radius:12px;margin:10px 0;">
           <ul>
             <li>Primary authoring format: markdown, yaml, or json?</li>
@@ -837,6 +844,11 @@
         if (translations[lang] && translations[lang][key]) {
           el.innerText = translations[lang][key];
         }
+      });
+
+      // Update Localized Images
+      document.querySelectorAll('img[data-src-en]').forEach(img => {
+        img.src = img.getAttribute('data-src-' + lang);
       });
     }
 
