@@ -100,6 +100,14 @@
       --pill-border: var(--dc-process-black);
       --pill-hover-bg: var(--dc-red-032);
       --pill-hover-text: #ffffff;
+
+      /* Lang Toggle Overrides */
+      --lang-bg: #ffffff;
+      --lang-text: var(--dc-process-black);
+      --lang-border: var(--dc-process-black);
+      --lang-active-bg: var(--good);
+      --lang-active-text: var(--dc-process-black);
+      --lang-active-border: var(--dc-process-black);
     }
 
     html,
@@ -170,6 +178,19 @@
       color: var(--pill-hover-text, var(--text));
       border-color: var(--pill-hover-border, var(--text));
       background: var(--pill-hover-bg, rgba(255, 255, 255, 0.05));
+    }
+
+    /* language toggle styles */
+    .lang-btn {
+      background: var(--lang-bg, transparent);
+      color: var(--lang-text, var(--muted));
+      border-color: var(--lang-border, var(--border));
+    }
+
+    .lang-btn.active {
+      background: var(--lang-active-bg, var(--good));
+      color: var(--lang-active-text, var(--bg)) !important;
+      border-color: var(--lang-active-border, var(--good)) !important;
     }
 
     .grid {
@@ -631,9 +652,9 @@
           </div>
           <div class="lang-toggle" style="display:flex; gap: 8px;">
             <button class="pill lang-btn active" id="lang-en" onclick="window.setUiLang('en')"
-              style="cursor: pointer; background: transparent;">EN</button>
+              style="cursor: pointer;">EN</button>
             <button class="pill lang-btn" id="lang-fr" onclick="window.setUiLang('fr')"
-              style="cursor: pointer; background: transparent;">FR</button>
+              style="cursor: pointer;">FR</button>
           </div>
         </div>
         <img src="assets/banner_intro.png" data-src-en="assets/banner_intro.png"
@@ -902,15 +923,10 @@
       // Update UI buttons
       document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.remove('active');
-        btn.style.borderColor = 'var(--border)';
-        btn.style.color = 'var(--muted)';
       });
       const activeBtn = document.getElementById('lang-' + lang);
       if (activeBtn) {
         activeBtn.classList.add('active');
-        activeBtn.style.color = 'var(--good)';
-        activeBtn.style.borderColor = 'var(--good)';
-        activeBtn.style.background = 'rgba(255, 255, 255, 0.05)';
       }
 
       // Translate DOM elements
