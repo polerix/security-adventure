@@ -72,7 +72,18 @@
       border-radius: 999px;
       color: var(--muted);
       font-size: 12px;
-      margin-right: 6px
+      margin-right: 6px;
+      transition: all 0.2s;
+    }
+
+    a.pill {
+      border-bottom: 1px solid var(--border);
+    }
+
+    a.pill:hover {
+      color: var(--text);
+      border-color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .grid {
@@ -287,11 +298,12 @@
     }
 
     .scenario-image {
-      width: 100%;
+      width: 50%;
       height: auto;
       border-radius: 12px;
       margin-bottom: 18px;
-      border: 1px solid var(--border);
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     }
 
     .scenario-text {
@@ -307,25 +319,32 @@
     }
 
     .choice-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      color: var(--text);
+      background: #f97316;
+      border: 3px solid #000;
+      color: #000;
       padding: 16px;
       border-radius: 10px;
       cursor: pointer;
       text-align: left;
-      transition: all 0.2s;
+      transition: transform 0.1s, box-shadow 0.1s;
+      box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
     }
 
     .choice-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--accent);
+      background: #fb923c;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.8);
+    }
+
+    .choice-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
     }
 
     .choice-btn .small {
       display: block;
       margin-top: 4px;
-      color: var(--muted);
+      color: rgba(0, 0, 0, 0.75);
       font-size: 13px;
     }
 
@@ -414,12 +433,12 @@
     <header>
       <div>
         <div style="margin-bottom:10px">
-          <span class="pill">choose-your-own-adventure</span>
-          <span class="pill">security training</span>
-          <span class="pill">processor + renderer</span>
+          <a href="#game-container" class="pill">choose-your-own-adventure</a>
+          <a href="#training-modules" class="pill">security training</a>
+          <a href="#process-overview" class="pill">processor + renderer</a>
         </div>
         <img src="assets/banner_intro.png" alt="Smarty the Fox Greeting"
-          style="width:100%;height:auto;border-radius:12px;margin-bottom:14px;">
+          style="width:50%;height:auto;border-radius:12px;margin-bottom:14px;">
         <h1>SecurityAdventure</h1>
         <div class="sub">
           A small “what-if” engine for security stories: write scenarios as structured nodes, compile them, validate
@@ -433,7 +452,7 @@
     </header>
 
     <!-- Training Modules Section -->
-    <nav class="module-nav">
+    <nav id="training-modules" class="module-nav">
       <button class="module-btn" onclick="game.startModule('module1')">
         <strong>Module 1</strong>
         <span class="desc">The Curious Case of the Lost Drive</span>
@@ -448,14 +467,14 @@
       <div class="placeholder-text">Select a training module above to begin.</div>
     </div>
 
-    <div class="grid">
+    <div id="process-overview" class="grid">
       <section class="card">
         <details open>
           <summary>
             <h2>Step-by-step process (proposed)</h2>
           </summary>
           <img src="assets/banner_process.png" alt="Nano Banana Step-by-step Process"
-            style="width:100%;height:auto;border-radius:12px;margin:10px 0;">
+            style="width:50%;height:auto;border-radius:12px;margin:10px 0;">
           <ol>
             <li>
               <b>Author scenarios</b>
@@ -497,7 +516,7 @@
             <h3>Minimal node format</h3>
           </summary>
           <img src="assets/banner_node_format.png" alt="Nano Banana Node Format"
-            style="width:100%;height:auto;border-radius:12px;margin:10px 0;">
+            style="width:50%;height:auto;border-radius:12px;margin:10px 0;">
           <pre><code>{
   "id": "start",
   "prompt": "You receive an email claiming to be from IT...",
@@ -513,7 +532,7 @@
             <h3>Pipeline sketch</h3>
           </summary>
           <img src="assets/banner_pipeline.png" alt="Nano Banana Pipeline Sketch"
-            style="width:100%;height:auto;border-radius:12px;margin:10px 0;">
+            style="width:50%;height:auto;border-radius:12px;margin:10px 0;">
           <div class="flow" role="img" aria-label="Author → compile → validate → run → export">
             <svg viewBox="0 0 980 140" width="980" height="140" style="max-width:100%;height:auto">
               <defs>
@@ -565,7 +584,7 @@
             <h3>Design goals (philosophy lab vibes)</h3>
           </summary>
           <img src="assets/banner_design_goals.png" alt="Nano Banana Design Goals"
-            style="width:100%;height:auto;border-radius:12px;margin:10px 0;">
+            style="width:50%;height:auto;border-radius:12px;margin:10px 0;">
           <ul>
             <li><span class="good">Citizens survive</span> by default: the world is coherent and self-consistent.</li>
             <li><span class="warn">Player interventions</span> create tradeoffs (security vs speed, stealth vs
@@ -578,10 +597,21 @@
       <aside class="card">
         <details open>
           <summary>
+            <h2>n8n Gamification Engine</h2>
+          </summary>
+          <div class="note" style="margin-top: 10px;">The current site is a Minimum Viable Product. The n8n process will
+            augment this by bridging Enterprise Content Management with Generative AI and Gamification.</div>
+          <a href="n8n_architecture.md" class="game-btn secondary"
+            style="display:inline-block; text-align:center; box-sizing: border-box; margin-top: 12px; margin-bottom: 10px; color: var(--accent); width: 100%;">View
+            Architecture Proposal</a>
+        </details>
+
+        <details>
+          <summary>
             <h2>Suggested next files</h2>
           </summary>
           <img src="assets/banner_next_files.png" alt="Nano Banana Next Files"
-            style="width:100%;height:auto;border-radius:12px;margin:10px 0;">
+            style="width:50%;height:auto;border-radius:12px;margin:10px 0;">
           <div class="note">If this repo stays tiny, these are the pieces that make it feel “real” fast.</div>
           <ol>
             <li><code>scenarios/</code> — sample adventures (phishing, USB drop, password reset, insider risk).</li>
@@ -597,7 +627,7 @@
             <h3>Open questions</h3>
           </summary>
           <img src="assets/banner_questions.png" alt="Nano Banana Open Questions"
-            style="width:100%;height:auto;border-radius:12px;margin:10px 0;">
+            style="width:50%;height:auto;border-radius:12px;margin:10px 0;">
           <ul>
             <li>Primary authoring format: markdown, yaml, or json?</li>
             <li>Do we allow cycles/loops ("investigate more")?</li>
