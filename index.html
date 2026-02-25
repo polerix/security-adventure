@@ -8,6 +8,27 @@
   <title>SecurityAdventure — Process Overview</title>
   <style>
     :root {
+      /* Primary Hero Colors */
+      --dc-red-032: #ef4123;
+      --dc-process-yellow: #ffde00;
+      --dc-process-cyan: #00adef;
+      --dc-pantone-285: #0072bc;
+
+      /* Secondary & Hero Tones */
+      --dc-pantone-354: #00a651;
+      --dc-pantone-orange-021: #f7941d;
+      --dc-pantone-266: #662d91;
+
+      /* Flesh Tones & Accents */
+      --dc-pantone-196: #f1d2d5;
+      --dc-pantone-489: #e6b39a;
+      --dc-pantone-132: #9e812b;
+
+      /* Technical Colors */
+      --dc-process-black: #231f20;
+      --dc-pantone-429: #a7a9ac;
+
+      /* Dark Mode Defaults */
       --bg: #0b0f19;
       --panel: #0f172a;
       --text: #e5e7eb;
@@ -49,27 +70,29 @@
     }
 
     [data-theme="comic"] {
-      --bg: #fffcdb;
-      --bg-image: radial-gradient(circle, #e2dfc6 2px, transparent 2px);
+      --bg: var(--dc-process-cyan);
+      /* Classic Superman Blue */
+      --bg-image: radial-gradient(circle, var(--dc-pantone-285) 2px, transparent 2px);
       --bg-size: 14px 14px;
 
       --panel: #ffffff;
-      --text: #000000;
-      --header-text: #000000;
-      --muted: #333333;
-      --accent: #f97316;
-      --accent2: #7c3aed;
-      --good: #4ade80;
-      --warn: #fbbf24;
-      --bad: #fca5a5;
-      --border: #000000;
+      --text: var(--dc-process-black);
+      --header-text: var(--dc-process-black);
+      --muted: var(--dc-pantone-429);
+      --accent: var(--dc-red-032);
+      --accent2: var(--dc-pantone-266);
+      --good: var(--dc-pantone-354);
+      --warn: var(--dc-process-yellow);
+      --bad: var(--dc-red-032);
+      --border: var(--dc-process-black);
 
       --panel-bg: #ffffff;
-      --border-comic: #000000;
+      /* Paperwhite for large panels */
+      --border-comic: var(--dc-process-black);
       --border-width-comic: 3px;
-      --card-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
-      --game-card-shadow: 8px 8px 0px rgba(0, 0, 0, 1);
-      --img-border: 4px solid #000000;
+      --card-shadow: 6px 6px 0px var(--dc-red-032);
+      --game-card-shadow: 8px 8px 0px var(--dc-red-032);
+      --img-border: 4px solid var(--dc-process-black);
     }
 
     html,
