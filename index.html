@@ -78,7 +78,7 @@
       --panel: #ffffff;
       --text: var(--dc-process-black);
       --header-text: var(--dc-process-black);
-      --muted: var(--dc-pantone-429);
+      --muted: #000000;
       --accent: var(--dc-red-032);
       --accent2: var(--dc-pantone-266);
       --good: var(--dc-pantone-354);
@@ -93,6 +93,13 @@
       --card-shadow: 6px 6px 0px var(--dc-red-032);
       --game-card-shadow: 8px 8px 0px var(--dc-red-032);
       --img-border: 4px solid var(--dc-process-black);
+
+      /* Custom Pill Styles */
+      --pill-bg: var(--dc-process-yellow);
+      --pill-text: var(--dc-process-black);
+      --pill-border: var(--dc-process-black);
+      --pill-hover-bg: var(--dc-red-032);
+      --pill-hover-text: #ffffff;
     }
 
     html,
@@ -146,22 +153,23 @@
     .pill {
       display: inline-block;
       padding: 2px 9px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--pill-border, var(--border));
       border-radius: 999px;
-      color: var(--muted);
+      color: var(--pill-text, var(--muted));
+      background: var(--pill-bg, transparent);
       font-size: 12px;
       margin-right: 6px;
       transition: all 0.2s;
     }
 
     a.pill {
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--pill-border, var(--border));
     }
 
     a.pill:hover {
-      color: var(--text);
-      border-color: var(--text);
-      background: rgba(255, 255, 255, 0.05);
+      color: var(--pill-hover-text, var(--text));
+      border-color: var(--pill-hover-border, var(--text));
+      background: var(--pill-hover-bg, rgba(255, 255, 255, 0.05));
     }
 
     .grid {
