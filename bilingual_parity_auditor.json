@@ -1,0 +1,197 @@
+{
+    "name": "Bilingual Parity Auditor (CDPS Prototype)",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "trigger"
+                        }
+                    ]
+                }
+            },
+            "name": "Trigger (Data Input)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ],
+            "notes": "Triggers when a bilingual consultation response package is received (e.g., from SharePoint or intake API)."
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o",
+                "messages": {
+                    "messageValues": [
+                        {
+                            "message": "Analyze the following public consultation text and rate the sentiment from 1 (Highly Negative) to 5 (Highly Positive). Also extract the primary 'Thematic Topic'. Only return JSON: {\"sentiment_score\": 3, \"topic\": \"Theme\"} \n\nText: {{$json.text_english}}",
+                            "role": "user"
+                        }
+                    ]
+                },
+                "responseFormat": "json_object"
+            },
+            "name": "Azure OpenAI (English Analysis)",
+            "type": "n8n-nodes-base.azureOpenAi",
+            "typeVersion": 1,
+            "position": [
+                500,
+                200
+            ],
+            "notes": "Route to Canada East Endpoint"
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o",
+                "messages": {
+                    "messageValues": [
+                        {
+                            "message": "Analysez le texte de consultation publique suivant et évaluez le sentiment de 1 (très négatif) à 5 (très positif). Extrayez également le « Thème » principal. Ne renvoyez que du JSON : {\"sentiment_score\": 3, \"topic\": \"Theme\"} \n\nTexte: {{$json.text_french}}",
+                            "role": "user"
+                        }
+                    ]
+                },
+                "responseFormat": "json_object"
+            },
+            "name": "Azure OpenAI (French Analysis)",
+            "type": "n8n-nodes-base.azureOpenAi",
+            "typeVersion": 1,
+            "position": [
+                500,
+                400
+            ],
+            "notes": "Route to Canada East Endpoint"
+        },
+        {
+            "parameters": {
+                "mode": "runOnceForEachItem",
+                "jsCode": "const engScore = $node[\"Azure OpenAI (English Analysis)\"].json.sentiment_score;\nconst freScore = $node[\"Azure OpenAI (French Analysis)\"].json.sentiment_score;\n\nconst driftThreshold = 1;\nlet isParityDrift = false;\n\nif (Math.abs(engScore - freScore) > driftThreshold) {\n  isParityDrift = true;\n}\n\nreturn {\n  entry_id: $node[\"Trigger (Data Input)\"].json.entry_id,\n  english_score: engScore,\n  french_score: freScore,\n  linguistic_drift_detected: isParityDrift,\n  drift_magnitude: Math.abs(engScore - freScore),\n  alert_message: isParityDrift ? \"Warning: Significant discrepancy in sentiment analysis between EN and FR outputs.\" : \"Parity verified.\"\n};"
+            },
+            "name": "Parity Auditor (Code Logic)",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                800,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{$json.linguistic_drift_detected}}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "If Drift Detected",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1000,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "channelId": "cdps-audit-alerts",
+                "text": "={{$json.alert_message}} Entry: {{$json.entry_id}}\nEN Score: {{$json.english_score}}\nFR Score: {{$json.french_score}}\nPlease have a bilingual Analyst review this entry manually."
+            },
+            "name": "Alert Human Review (Teams)",
+            "type": "n8n-nodes-base.microsoftTeams",
+            "typeVersion": 1,
+            "position": [
+                1300,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "tableName": "CDPS_Processed_Consultations"
+            },
+            "name": "Save to DB (Protected B)",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2,
+            "position": [
+                1300,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "Trigger (Data Input)": {
+            "main": [
+                [
+                    {
+                        "node": "Azure OpenAI (English Analysis)",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Azure OpenAI (French Analysis)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Azure OpenAI (English Analysis)": {
+            "main": [
+                [
+                    {
+                        "node": "Parity Auditor (Code Logic)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Azure OpenAI (French Analysis)": {
+            "main": [
+                [
+                    {
+                        "node": "Parity Auditor (Code Logic)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parity Auditor (Code Logic)": {
+            "main": [
+                [
+                    {
+                        "node": "If Drift Detected",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "If Drift Detected": {
+            "main": [
+                [
+                    {
+                        "node": "Alert Human Review (Teams)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Save to DB (Protected B)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {},
+    "versionId": "8bdce58b-94c6-4d2c-85fa-7f892d1920ef"
+}

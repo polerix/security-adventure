@@ -1,0 +1,8 @@
+{
+  "consultation_id": "CDPS-2026",
+  "entry_id": "TEST-001",
+  "chunk_index": 2,
+  "total_chunks": 4,
+  "received_date": "2026-03-02",
+  "text_content": "into smaller chunks. We must make sure that it preserves metadata."
+}

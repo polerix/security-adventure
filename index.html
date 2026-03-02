@@ -551,7 +551,7 @@
     }
 
     .scenario-text {
-      background: #f97316;
+      background: #f97316 url('assets/gradientOO.png') center/cover no-repeat;
       border: 3px solid #000;
       color: #000;
       padding: 16px;
@@ -750,6 +750,7 @@
             <a href="#game-container" class="pill" data-i18n="nav_adventure">choose-your-own-adventure</a>
             <a href="#training-modules" class="pill" data-i18n="nav_training">security training</a>
             <a href="#process-overview" class="pill" data-i18n="nav_process">processor + renderer</a>
+            <a href="#cdps-scaling" class="pill" data-i18n="nav_cdps">cdps ai scaling</a>
           </div>
           <div class="lang-toggle" style="display:flex; gap: 8px;">
             <button class="pill lang-btn active" id="lang-en" onclick="window.setUiLang('en')"
@@ -764,7 +765,7 @@
 
         <div class="comic-coupon">
           <span class="scissors">✂️</span>
-          <h1>SecurityAdventure</h1>
+          <h1 data-i18n="app_title">SecurityAdventure</h1>
           <div class="sub" data-i18n="hero_sub">
             A small “what-if” engine for security stories: write scenarios as structured nodes, compile them, validate
             them,
@@ -795,11 +796,59 @@
       </div>
     </header>
 
+    <div id="cdps-scaling" class="grid" style="margin-bottom: 24px;">
+      <section class="card">
+        <details>
+          <summary>
+            <h2 data-i18n="cdps_title">CDPS AI Scaling & Data Residency</h2>
+          </summary>
+          <div class="note" style="margin-bottom: 12px;">The Chief Data and Policy Strategy (CDPS) branch architecture
+            for analyzing 10,000+ public consultation entries while adhering to Protected B data sovereignty.</div>
+
+          <img src="assets/banner_pipeline.png" alt="CDPS Pipeline" class="banner-image"
+            style="filter: hue-rotate(120deg);"> <!-- Repurposed visual for prototype -->
+
+          <h3>1. High-Volume Batch Processing</h3>
+          <p class="note">N8n workflows configured with internal looping and queue management to digest thousands of
+            records over time without hitting API timeouts.</p>
+
+          <h3>2. "Sliding Window" Context Management</h3>
+          <p class="note">A Python-based <code>chunking_utility.py</code> securely structures long PDF/Word documents
+            into overlapping RAG-optimized pieces while perfectly preserving root ECCC metadata (consultation ID, entry
+            ID).</p>
+
+          <h3>3. Automated Metadata Validator</h3>
+          <p class="note">An integrated pre-processor (<code>metadata_validator.py</code>) verifies incoming data
+            against standard <strong>ECCC Controlled Vocabularies</strong> (e.g., verified Regions and Themes) before
+            executing expensive GenAI operations.</p>
+
+          <h3>4. Bilingual Parity Auditor</h3>
+          <ol>
+            <li>
+              <b>Mandatory Translation Parity:</b>
+              <div class="note">Triggers parallel analysis for French and English sources using Azure OpenAI endpoints
+                based strictly in <u>Canada East</u>.</div>
+            </li>
+            <li>
+              <b>Mathematical Drift Detection:</b>
+              <div class="note">Analyzes sentiment outputs from both streams, calculating divergence. If the 'linguistic
+                drift' exceeds the tolerance threshold, it flags the entry for human CDPS review via a Teams bot
+                webhook.</div>
+            </li>
+          </ol>
+
+          <div class="note" style="margin-top: 16px;">
+            📄 Read the full technical blueprint: <a href="CDPS-Scaling.md" target="_blank">CDPS-Scaling.md</a>
+          </div>
+        </details>
+      </section>
+    </div>
+
     <div id="process-overview" class="grid">
       <section class="card">
         <details open>
           <summary>
-            <h2>Step-by-step process (proposed)</h2>
+            <h2 data-i18n="step_by_step_title">Step-by-step process (proposed)</h2>
           </summary>
           <img src="assets/banner_process.png" data-src-en="assets/banner_process.png"
             data-src-fr="assets/fr_banner_process.png" alt="Nano Banana Step-by-step Process" class="banner-image">
@@ -998,7 +1047,9 @@
         placeholder: "Select a training module above to begin.",
         n8n_title: "n8n Gamification Engine",
         n8n_desc: "The current site is a Minimum Viable Product. The n8n process will augment this by bridging Enterprise Content Management with Generative AI and Gamification.",
-        n8n_link: "View Architecture Proposal"
+        n8n_link: "View Architecture Proposal",
+        app_title: "SecurityAdventure",
+        step_by_step_title: "Step-by-step process (proposed)"
       },
       fr: {
         nav_adventure: "choisissez-votre-aventure",
@@ -1012,7 +1063,9 @@
         placeholder: "Sélectionnez un module de formation ci-dessus pour commencer.",
         n8n_title: "Moteur de Ludification n8n",
         n8n_desc: "Le site actuel est un Produit Minimum Viable. Le processus n8n viendra l'augmenter en reliant la Gestion de Contenu d'Entreprise à l'IA Générative et à la Ludification.",
-        n8n_link: "Voir la proposition d'architecture"
+        n8n_link: "Voir la proposition d'architecture",
+        app_title: "Aventure de Sécurité",
+        step_by_step_title: "Processus étape par étape (proposé)"
       }
     };
 

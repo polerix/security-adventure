@@ -1,0 +1,64 @@
+{
+    "themes": [
+        {
+            "en": "Biodiversity",
+            "fr": "Biodiversité"
+        },
+        {
+            "en": "Climate Change",
+            "fr": "Changements Climatiques"
+        },
+        {
+            "en": "Pollution",
+            "fr": "Pollution"
+        },
+        {
+            "en": "Conservation",
+            "fr": "Conservation"
+        },
+        {
+            "en": "Policy",
+            "fr": "Politique"
+        }
+    ],
+    "regions": [
+        {
+            "en": "National Capital Region (NCR)",
+            "fr": "Région de la Capitale Nationale (RCN)"
+        },
+        {
+            "en": "Pacific",
+            "fr": "Pacifique"
+        },
+        {
+            "en": "Prairie and Northern",
+            "fr": "Prairies et Nord"
+        },
+        {
+            "en": "Ontario",
+            "fr": "Ontario"
+        },
+        {
+            "en": "Quebec",
+            "fr": "Québec"
+        },
+        {
+            "en": "Atlantic",
+            "fr": "Atlantique"
+        }
+    ],
+    "sentiments": [
+        {
+            "en": "Positive",
+            "fr": "Positif"
+        },
+        {
+            "en": "Neutral",
+            "fr": "Neutre"
+        },
+        {
+            "en": "Negative",
+            "fr": "Négatif"
+        }
+    ]
+}
