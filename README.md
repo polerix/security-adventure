@@ -1,4 +1,4 @@
-# 🌊 SecurityAdventure 🌊
+# 🌊 security-adventure 🌊
 
 🫧 Choose your own adventure processor, flowing through the logic gates. 🫧
 

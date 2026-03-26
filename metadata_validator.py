@@ -5,7 +5,7 @@ import os
 
 DICTIONARY_FILE = 'eccc_data_dictionary_bilingual.json'
 
-class SecurityAdventureValidator:
+class security-adventureValidator:
     def __init__(self, dict_path=DICTIONARY_FILE):
         self.errors = []
         self.warnings = []
@@ -40,7 +40,7 @@ class SecurityAdventureValidator:
         return True
 
     def validate_schema(self, data):
-        """Validates that the output matches the SecurityAdventure Game Engine JSON Schema."""
+        """Validates that the output matches the security-adventure Game Engine JSON Schema."""
         self.errors = []
         self.warnings = []
 
@@ -126,7 +126,7 @@ class SecurityAdventureValidator:
 
 def run_test():
     """Runs a self-test of the metadata validator with good and bad data based on the Schema."""
-    validator = SecurityAdventureValidator()
+    validator = security-adventureValidator()
 
     print("--- Test 1: Valid Game Module with ECCC Metadata ---")
     valid_module = {
@@ -193,7 +193,7 @@ def process_file(filepath: str):
      script_dir = os.path.dirname(os.path.abspath(__file__))
      dict_path = os.path.join(script_dir, DICTIONARY_FILE)
      
-     validator = SecurityAdventureValidator(dict_path=dict_path)
+     validator = security-adventureValidator(dict_path=dict_path)
      is_valid = validator.validate_schema(data)
      
      print(f"Validating file: {filepath}")
@@ -205,7 +205,7 @@ def process_file(filepath: str):
           sys.exit(0)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="SecurityAdventure Schema & ECCC Metadata Validator")
+    parser = argparse.ArgumentParser(description="security-adventure Schema & ECCC Metadata Validator")
     parser.add_argument('--test', action='store_true', help='Run self-verification test')
     parser.add_argument('--file', type=str, help='Validate a specific JSON gameplay output file')
     

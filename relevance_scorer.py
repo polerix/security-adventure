@@ -38,6 +38,6 @@ def score_feedback(user_input, data_dict):
     
     return scores
 
-# Example usage within the SecurityAdventure pipeline:
+# Example usage within the security-adventure pipeline:
 # user_feedback = "I am concerned about carbon pricing and net-zero targets."
 # results = score_feedback(user_feedback, load_dictionary('eccc_data_dictionary.json'))

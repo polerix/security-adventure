@@ -1,6 +1,6 @@
 # Government Gamification Engine (Powered by n8n)
 
-This document outlines the sophisticated workflow that bridges **Enterprise Content Management** (Microsoft 365) with **Generative AI** and **Gamification** to further develop the SecurityAdventure project. 
+This document outlines the sophisticated workflow that bridges **Enterprise Content Management** (Microsoft 365) with **Generative AI** and **Gamification** to further develop the security-adventure project. 
 
 For a Canadian Federal Government context, this system prioritizes **Bilingualism (Official Languages Act)**, **Accessibility (WCAG)**, and **Data Sovereignty**.
 

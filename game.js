@@ -1,5 +1,5 @@
 /**
- * SecurityAdventure Game Engine
+ * security-adventure Game Engine
  * Handles scenario rendering, choices, and scoring.
  */
 
