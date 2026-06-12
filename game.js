@@ -210,13 +210,38 @@ class SecurityGame {
       console.error("Module not found:", moduleId);
       return;
     }
+    
+    // Set active class on navigation module cards
+    document.querySelectorAll('.module-card').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.getAttribute('data-module') === moduleId) {
+        btn.classList.add('active');
+      }
+    });
+
     this.currentNodeId = this.currentModule.startNode;
     this.sessionScore = { integrity: 0, vigilance: 0, diplomacy: 0 };
     this.badges = [];
     this.render();
 
-    // Scroll to game container
-    this.container.scrollIntoView({ behavior: 'smooth' });
+    // Scroll to game container (in right scrollable panel if desktop)
+    const rightPanel = document.getElementById('right-content-panel');
+    if (rightPanel && window.innerWidth >= 900) {
+      rightPanel.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      this.container.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  resetLeftVisual() {
+    const leftTarget = document.getElementById('left-visual-target');
+    if (leftTarget) {
+      leftTarget.innerHTML = `<img id="welcome-banner" src="assets/banner_intro.png" data-src-en="assets/banner_intro.png" data-src-fr="assets/fr_banner_intro.png" alt="Smarty the Fox Greeting">`;
+      const welcomeImg = document.getElementById('welcome-banner');
+      if (welcomeImg) {
+        welcomeImg.src = welcomeImg.getAttribute('data-src-' + currentLanguage);
+      }
+    }
   }
 
   render() {
@@ -232,13 +257,24 @@ class SecurityGame {
     header.className = 'game-header';
     card.appendChild(header);
 
-    // Image
+    // Image Targeting split-pane Left Panel on Desktop
+    const leftTarget = document.getElementById('left-visual-target');
     if (node.image) {
       const img = document.createElement('img');
       img.src = typeof node.image === 'string' ? node.image : node.image[currentLanguage];
       img.className = 'scenario-image';
       img.alt = 'Scenario Illustration';
-      card.appendChild(img);
+      
+      if (leftTarget && window.innerWidth >= 900) {
+        leftTarget.innerHTML = '';
+        leftTarget.appendChild(img);
+      } else {
+        card.appendChild(img);
+      }
+    } else {
+      if (leftTarget && window.innerWidth >= 900) {
+        this.resetLeftVisual();
+      }
     }
 
     // Text
@@ -269,6 +305,8 @@ class SecurityGame {
       backBtn.innerText = currentLanguage === 'fr' ? 'Retour au Menu' : 'Back to Menu';
       backBtn.onclick = () => {
         this.container.innerHTML = `<div class="placeholder-text">${currentLanguage === 'fr' ? 'Sélectionnez un module de formation ci-dessus pour commencer.' : 'Select a training module above to begin.'}</div>`;
+        this.resetLeftVisual();
+        document.querySelectorAll('.module-card').forEach(btn => btn.classList.remove('active'));
       };
       card.appendChild(backBtn);
     } else {
