@@ -1007,11 +1007,11 @@
       </div>
       
       <nav id="training-modules" class="module-nav-grid">
-        <button class="module-card" data-module="module1" onclick="game.startModule('module1')">
+        <button class="module-card" data-module="module1" onclick="window.location.href='module1.html'">
           <strong data-i18n="mod1_title">Module 1</strong>
           <span class="desc" data-i18n="mod1_desc">The Curious Case of the Lost Drive</span>
         </button>
-        <button class="module-card" data-module="module2" onclick="game.startModule('module2')">
+        <button class="module-card" data-module="module2" onclick="window.location.href='module2.html'">
           <strong data-i18n="mod2_title">Module 2</strong>
           <span class="desc" data-i18n="mod2_desc">The Doorway Dilemma</span>
         </button>
@@ -1508,7 +1508,7 @@
     }
   </script>
 
-  <script src="game.js"></script>
+
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const loader = document.getElementById('pacman-loader');
