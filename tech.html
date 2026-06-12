@@ -1,0 +1,1838 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b0f19" />
+  <title>security-adventure â€” Process Overview</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+    :root {
+      /* Typography */
+      --font-text: 'Outfit', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+      /* Primary Hero Colors */
+      --dc-red-032: #ef4123;
+      --dc-process-yellow: #ffde00;
+      --dc-process-cyan: #00adef;
+      --dc-pantone-285: #0072bc;
+
+      /* Secondary & Hero Tones */
+      --dc-pantone-354: #00a651;
+      --dc-pantone-orange-021: #f7941d;
+      --dc-pantone-266: #662d91;
+
+      /* Technical Colors */
+      --dc-process-black: #231f20;
+      --dc-pantone-429: #a7a9ac;
+
+      /* Dark Mode Defaults */
+      --bg: #0b0f19;
+      --panel: #0f172a;
+      --text: #e5e7eb;
+      --muted: #aab4c6;
+      --accent: #6ee7ff;
+      --accent2: #a78bfa;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #fb7185;
+      --border: rgba(255, 255, 255, 0.10);
+      --panel-bg: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.72));
+      --border-comic: var(--border);
+      --border-width-comic: 1px;
+      --card-shadow: none;
+      --game-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      --img-border: 1px solid var(--border);
+      --bg-left-panel: rgba(15, 23, 42, 0.4);
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --header-text: #0f172a;
+      --muted: #64748b;
+      --accent: #0ea5e9;
+      --accent2: #8b5cf6;
+      --good: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --border: rgba(0, 0, 0, 0.1);
+      --panel-bg: #ffffff;
+      --border-comic: rgba(0, 0, 0, 0.1);
+      --border-width-comic: 1px;
+      --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      --game-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --img-border: 1px solid rgba(0, 0, 0, 0.1);
+      --bg-left-panel: rgba(255, 255, 255, 0.5);
+    }
+
+    [data-theme="comic"] {
+      --bg: var(--dc-process-cyan);
+      --bg-image: radial-gradient(circle, var(--dc-pantone-285) 2px, transparent 2px);
+      --bg-size: 14px 14px;
+      --panel: #ffffff;
+      --text: var(--dc-process-black);
+      --header-text: var(--dc-process-black);
+      --muted: #000000;
+      --accent: var(--dc-red-032);
+      --accent2: var(--dc-pantone-266);
+      --good: var(--dc-pantone-354);
+      --warn: var(--dc-process-yellow);
+      --bad: var(--dc-red-032);
+      --border: var(--dc-process-black);
+      --panel-bg: #eeeeee;
+      --border-comic: var(--dc-process-black);
+      --border-width-comic: 3px;
+      --card-shadow: 6px 6px 0px var(--dc-red-032);
+      --game-card-shadow: 8px 8px 0px var(--dc-red-032);
+      --img-border: 4px solid var(--dc-process-black);
+      --bg-left-panel: #fff;
+    }
+
+    html,
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      background-image: var(--bg-image, none);
+      background-size: var(--bg-size, auto);
+      color: var(--text);
+      font-family: var(--font-text);
+      font-size: 14px;
+      line-height: 1.45;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(110, 231, 255, 0.35);
+      transition: border-bottom-color 0.2s;
+    }
+
+    a:hover {
+      border-bottom-color: rgba(110, 231, 255, 0.85);
+    }
+
+    /* Layout & Viewport Locks */
+    #dashboard-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    @media (min-width: 900px) {
+      html, body {
+        height: 100%;
+        overflow: hidden;
+      }
+      #dashboard-container {
+        display: grid;
+        grid-template-rows: 40dvh 60dvh;
+        height: 100dvh;
+        overflow: hidden;
+      }
+    }
+
+    /* Row 1: Header/Navigation (40vh) */
+    #nav-section {
+      box-sizing: border-box;
+      border-bottom: var(--border-width-comic) solid var(--border-comic);
+      background: var(--panel-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 24px;
+      z-index: 10;
+    }
+
+    @media (min-width: 900px) {
+      #nav-section {
+        height: 40dvh;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 32px;
+        overflow: hidden;
+      }
+    }
+
+    .logo-area {
+      max-width: 45ch;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .logo-area h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      font-weight: 800;
+    }
+
+    .logo-area .sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    /* Dual Card Grid */
+    .module-nav-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      width: 100%;
+    }
+
+    @media (min-width: 600px) {
+      .module-nav-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .module-nav-grid {
+        max-width: 750px;
+        height: 100%;
+        align-items: center;
+      }
+    }
+
+    .module-card {
+      background: var(--panel-bg);
+      border: var(--border-width-comic) solid var(--border-comic);
+      color: var(--text);
+      padding: 20px 24px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-family: var(--font-text);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--card-shadow);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 100px;
+      height: 100%;
+      outline: none;
+    }
+
+    [data-theme="comic"] .module-card {
+      background-image: radial-gradient(rgba(0, 0, 0, 0.05) 15%, transparent 16%);
+      background-size: 8px 8px;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: transparent;
+      transition: background-color 0.2s;
+    }
+
+    .module-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(110, 231, 255, 0.05);
+    }
+
+    .module-card strong {
+      font-size: 18px;
+      display: block;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .module-card .desc {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: normal;
+    }
+
+    /* Active boundary states */
+    .module-card.active {
+      border-color: var(--good);
+      box-shadow: 0 0 15px rgba(52, 211, 153, 0.25), inset 0 0 12px rgba(52, 211, 153, 0.1);
+    }
+
+    .module-card.active::before {
+      background: var(--good);
+    }
+
+    [data-theme="comic"] .module-card.active {
+      border-width: 4px;
+      border-color: var(--dc-process-black);
+      box-shadow: 8px 8px 0px var(--dc-process-yellow);
+      background-color: var(--dc-process-yellow) !important;
+    }
+
+    [data-theme="comic"] .module-card.active strong {
+      color: var(--dc-process-black);
+    }
+
+    [data-theme="comic"] .module-card.active .desc {
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    /* Row 2: Split-Pane Area (60vh) */
+    #main-section {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    @media (min-width: 900px) {
+      #main-section {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        height: 60dvh;
+        overflow: hidden;
+      }
+    }
+
+    .left-panel {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-left-panel);
+      border-bottom: var(--border-width-comic) solid var(--border-comic);
+    }
+
+    @media (min-width: 900px) {
+      .left-panel {
+        height: 100%;
+        overflow: hidden;
+        border-bottom: none;
+        border-right: var(--border-width-comic) solid var(--border-comic);
+      }
+    }
+
+    #left-visual-target {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    #left-visual-target img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      border: var(--img-border);
+      box-shadow: var(--game-card-shadow);
+      transition: all 0.3s;
+    }
+
+    @media (min-width: 900px) {
+      #left-visual-target img {
+        max-height: 100%;
+      }
+    }
+
+    .right-panel {
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 900px) {
+      .right-panel {
+        height: 100%;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+        padding: 32px;
+        overscroll-behavior: contain;
+      }
+    }
+
+    /* Cards inside Right Panel */
+    .card {
+      background: var(--panel-bg);
+      border: var(--border-width-comic) solid var(--border-comic);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 24px;
+      transition: all 0.2s;
+    }
+
+    /* Control Capsule */
+    .control-capsule {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 6px 16px;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s, border 0.3s;
+    }
+
+    [data-theme="light"] .control-capsule {
+      background: rgba(255, 255, 255, 0.7);
+      border-color: rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="comic"] .control-capsule {
+      background: #ffffff;
+      border: 3px solid var(--dc-process-black);
+      box-shadow: 4px 4px 0 var(--dc-process-black);
+    }
+
+    .capsule-divider {
+      color: rgba(255, 255, 255, 0.2);
+      font-weight: 300;
+      user-select: none;
+    }
+
+    [data-theme="light"] .capsule-divider {
+      color: rgba(0, 0, 0, 0.15);
+    }
+
+    [data-theme="comic"] .capsule-divider {
+      color: var(--dc-process-black);
+      font-weight: bold;
+    }
+
+    .theme-controls, .lang-controls {
+      display: flex;
+      gap: 4px;
+    }
+
+    .control-capsule button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-text);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 4px 8px;
+      border-radius: 999px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-capsule button:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="light"] .control-capsule button:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .control-capsule button.active {
+      color: var(--accent);
+      background: rgba(110, 231, 255, 0.15);
+    }
+
+    [data-theme="comic"] .control-capsule button.active {
+      background: var(--dc-process-yellow);
+      color: var(--dc-process-black);
+      border: 1px solid var(--dc-process-black);
+    }
+
+    /* Ishikawa Canvas styling */
+    .fishbone-canvas-container {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      border-radius: 12px;
+      border: var(--border-width-comic) solid var(--border-comic);
+      background: #ffffff;
+      overflow: hidden;
+      margin: 16px 0;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .fishbone-canvas-container canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .fullscreen-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.6);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+
+    .fullscreen-btn:hover {
+      background: rgba(15, 23, 42, 0.85);
+      transform: scale(1.05);
+    }
+
+    /* Fullscreen fishbone layout */
+    .fishbone-canvas-container.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2000;
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      box-sizing: border-box;
+      border-radius: 0;
+      margin: 0;
+      border: none;
+    }
+
+    .fishbone-canvas-container.fullscreen canvas {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: 8px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .fishbone-canvas-container .close-fullscreen-btn {
+      display: none;
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 24px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .fishbone-canvas-container .close-fullscreen-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .fishbone-canvas-container.fullscreen .close-fullscreen-btn {
+      display: flex;
+    }
+
+    .fishbone-canvas-container.fullscreen .fullscreen-btn {
+      display: none;
+    }
+
+    /* Ishikawa inputs grid */
+    .fishbone-inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .cause-column {
+      background: rgba(0, 0, 0, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    [data-theme="dark"] .cause-column {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .cause-column h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent2);
+      margin: 0 0 4px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cause-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cause-input {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .cause-input input {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-text);
+      font-size: 13px;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+
+    .cause-input input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .remove-btn {
+      padding: 6px 10px;
+      background: var(--bad);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+
+    .remove-btn:hover {
+      opacity: 0.85;
+    }
+
+    .add-btn {
+      padding: 8px 14px;
+      background: rgba(110, 231, 255, 0.1);
+      color: var(--accent);
+      border: 1px dashed var(--accent);
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font-text);
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .add-btn:hover {
+      background: rgba(110, 231, 255, 0.18);
+    }
+
+    /* General rules from original styling, tweaked */
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .pacman-loader {
+      background: #000;
+      border: var(--border-width-comic) solid var(--border-comic);
+      border-radius: 12px;
+      padding: 12px;
+      margin: 10px 0;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      box-sizing: border-box;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .terminal-emulator {
+      background: #000;
+      border: var(--border-width-comic) solid var(--border-comic);
+      border-radius: 12px;
+      color: #33ff33;
+      text-shadow: 0 0 2px rgba(51, 255, 51, 0.5);
+      max-width: 100%;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 10px 0;
+      padding: 12px;
+    }
+
+    .terminal-emulator code {
+      background: transparent;
+      border: none;
+      color: inherit;
+      font-size: 13.5px;
+    }
+
+    .banner-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 10px 0;
+      border: var(--border-width-comic) solid var(--border-comic);
+    }
+
+    details>summary {
+      cursor: pointer;
+      list-style: none;
+      position: relative;
+      padding-left: 24px;
+      outline: none;
+    }
+
+    details>summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details>summary::before {
+      content: "â–¶";
+      position: absolute;
+      left: 0;
+      top: 2px;
+      font-size: 10px;
+      transition: transform 0.2s;
+      color: var(--accent);
+    }
+
+    details[open]>summary::before {
+      transform: rotate(90deg);
+    }
+
+    .comic-coupon {
+      position: relative;
+      margin: 20px 0;
+      padding: 24px;
+      border: 3px dashed var(--border);
+      border-radius: 16px;
+      background: var(--panel-bg);
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .comic-coupon .scissors {
+      position: absolute;
+      top: -14px;
+      right: 32px;
+      font-size: 24px;
+      background: var(--bg);
+      padding: 0 4px;
+      transform: rotate(20deg);
+      border-radius: 8px;
+    }
+
+    [data-theme="comic"] .comic-coupon {
+      background: var(--dc-process-cyan);
+      border-color: var(--dc-process-black);
+      box-shadow: 6px 6px 0px var(--dc-process-black);
+    }
+
+    [data-theme="comic"] .comic-coupon .scissors {
+      background: transparent;
+      text-shadow: 1px 1px 0px var(--dc-process-black);
+    }
+
+    .placeholder-text {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Game UI inside right panel */
+    .game-card {
+      background: var(--panel-bg);
+      border: var(--border-width-comic) solid var(--border-comic);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--game-card-shadow);
+      margin-bottom: 24px;
+    }
+
+    .game-header {
+      color: var(--accent2);
+      margin-top: 0;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      font-size: 20px;
+    }
+
+    .scenario-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      border: var(--img-border);
+      box-shadow: var(--card-shadow);
+    }
+
+    @media (min-width: 900px) {
+      .right-panel .scenario-image { display: none; /* Renders in Left Panel instead */ }
+    }
+
+    .scenario-text {
+      background: #f97316;
+      border: 3px solid #000;
+      color: #000;
+      padding: 12px;$114px;
+      font-weight: 600;
+      line-height: 1.5;$112px;
+      white-space: pre-wrap;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.8);
+    }
+
+    .choices-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .choice-btn {
+      background: #f97316;
+      border: 3px solid #000;
+      color: #000;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.1s, box-shadow 0.1s;
+      box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+      font-family: var(--font-text);
+    }
+
+    .choice-btn:hover {
+      background: #fb923c;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.8);
+    }
+
+    .choice-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+    }
+
+    .choice-btn .small {
+      display: block;
+      margin-top: 4px;
+      color: rgba(0, 0, 0, 0.75);
+      font-size: 13px;
+    }
+
+    .result-box {
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 16px;
+      border: 3px solid #000;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.8);
+      color: #000;
+    }
+
+    .result-box.success { background: #4ade80; }
+    .result-box.failure { background: #fef3c7; }
+    .result-box.neutral { background: #fde047; }
+
+    .scorecard {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border: 1px solid var(--border);
+    }
+
+    [data-theme="light"] .scorecard {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .scorecard h4 {
+      margin: 0 0 12px 0;
+      color: var(--accent);
+      font-size: 16px;
+    }
+
+    .metrics {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .badges-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .badge-pill {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--warn);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .game-btn {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font-text);
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .game-btn:hover {
+      opacity: 0.9;
+    }
+
+    .game-btn.secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .game-btn.secondary:hover {
+      border-color: var(--text);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Scrollbar adjustments */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+    }
+    [data-theme="light"] ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    footer {
+      margin-top: 32px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+</style>
+</head>
+
+<body>
+  <!-- Control Capsule (Theme + Language) -->
+  <div class="control-capsule">
+    <div class="theme-controls">
+      <button class="theme-btn" onclick="setTheme('light')" id="theme-light" title="Professional Light">â˜€ï¸</button>
+      <button class="theme-btn" onclick="setTheme('dark')" id="theme-dark" title="Professional Dark">ðŸŒ™</button>
+      <button class="theme-btn" onclick="setTheme('comic')" id="theme-comic" title="Comic Book / Accessible High Contrast">ðŸ…°ï¸</button>
+    </div>
+    <span class="capsule-divider">|</span>
+    <button class="theme-btn" onclick="window.location.href='index.html'" style="font-size: 16px;" title="Return to Game">🎮</button>
+    <span class="capsule-divider">|</span>
+    <div class="lang-controls">
+      <button class="lang-btn active" id="lang-en" onclick="window.setUiLang('en')">EN</button>
+      <button class="lang-btn" id="lang-fr" onclick="window.setUiLang('fr')">FR</button>
+    </div>
+  </div>
+
+  <div id="dashboard-container">
+    <!-- Row 1: Main Entry & Navigation Hierarchy (40vh) -->
+    <header id="nav-section">
+      <div class="logo-area">
+        <h1 data-i18n="app_title">security-adventure</h1>
+        <div class="sub" data-i18n="hero_sub">
+          A small "what-if" engine for security stories: write scenarios as structured nodes, compile them, validate them, and run them as a playable adventure (web, CLI, or both).
+        </div>
+        <div class="sub-nav-pills" style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="#game-container" class="pill" onclick="scrollToCard(event, 'game-container')" data-i18n="nav_adventure">choose-your-own-adventure</a>
+          <a href="#cdps-scaling" class="pill" onclick="scrollToCard(event, 'cdps-scaling')" data-i18n="nav_cdps">cdps ai scaling</a>
+          <a href="#process-overview" class="pill" onclick="scrollToCard(event, 'process-overview')" data-i18n="nav_process">processor + renderer</a>
+          <a href="#ishikawa-discovery" class="pill" onclick="scrollToCard(event, 'ishikawa-discovery')">ishikawa discovery</a>
+        </div>
+      </div>
+      
+      <nav id="training-modules" class="module-nav-grid" style="display:none;"></nav>
+    </header>
+
+    <!-- Row 2: Split-Pane Dashboard (60vh) -->
+    <main id="main-section">
+      <!-- Left Panel: Visual/Illustration (Sticky Flex-Box) -->
+      <section class="left-panel">
+        <div id="left-visual-target">
+          <img id="welcome-banner" src="assets/banner_intro.png" data-src-en="assets/banner_intro.png" data-src-fr="assets/fr_banner_intro.png" alt="Smarty the Fox Greeting">
+        </div>
+      </section>
+
+      <!-- Right Panel: Text/Documentation (Scrollable) -->
+      <section class="right-panel" id="right-content-panel">
+        <!-- Technical Implementation Section -->
+        <div id="cdps-scaling" class="card" >
+      <section class="card">
+        <details>
+          <summary>
+            <h2 data-i18n="cdps_title">CDPS AI Scaling & Data Residency</h2>
+          </summary>
+          <div class="note" style="margin-bottom: 12px;">The Chief Data and Policy Strategy (CDPS) branch architecture
+            for analyzing 10,000+ public consultation entries while adhering to Protected B data sovereignty.</div>
+
+          <img src="assets/banner_pipeline.png" alt="CDPS Pipeline" class="banner-image"
+            style="filter: hue-rotate(120deg);"> <!-- Repurposed visual for prototype -->
+
+          <h3>1. High-Volume Batch Processing</h3>
+          <p class="note">N8n workflows configured with internal looping and queue management to digest thousands of
+            records over time without hitting API timeouts.</p>
+
+          <h3>2. "Sliding Window" Context Management</h3>
+          <p class="note">A Python-based <code>chunking_utility.py</code> securely structures long PDF/Word documents
+            into overlapping RAG-optimized pieces while perfectly preserving root ECCC metadata (consultation ID, entry
+            ID).</p>
+
+          <h3>3. Automated Metadata Validator</h3>
+          <p class="note">An integrated pre-processor (<code>metadata_validator.py</code>) verifies incoming data
+            against standard <strong>ECCC Controlled Vocabularies</strong> (e.g., verified Regions and Themes) before
+            executing expensive GenAI operations.</p>
+
+          <h3>4. Bilingual Parity Auditor</h3>
+          <ol>
+            <li>
+              <b>Mandatory Translation Parity:</b>
+              <div class="note">Triggers parallel analysis for French and English sources using Azure OpenAI endpoints
+                based strictly in <u>Canada East</u>.</div>
+            </li>
+            <li>
+              <b>Mathematical Drift Detection:</b>
+              <div class="note">Analyzes sentiment outputs from both streams, calculating divergence. If the 'linguistic
+                drift' exceeds the tolerance threshold, it flags the entry for human CDPS review via a Teams bot
+                webhook.</div>
+            </li>
+          </ol>
+
+          <div class="note" style="margin-top: 16px;">
+            ðŸ“„ Read the full technical blueprint: <a href="CDPS-Scaling.md" target="_blank">CDPS-Scaling.md</a>
+          </div>
+        </details>
+      </section>
+    </div>
+
+    <div id="process-overview" class="card">
+      <section class="card">
+        <details open>
+          <summary>
+            <h2 data-i18n="step_by_step_title">Step-by-step process (proposed)</h2>
+          </summary>
+          <img src="assets/banner_process.png" data-src-en="assets/banner_process.png"
+            data-src-fr="assets/fr_banner_process.png" alt="Nano Banana Step-by-step Process" class="banner-image">
+          <ol>
+            <li>
+              <b>Author scenarios</b>
+              <div class="note">Write each decision point as a node with: <code>id</code>, <code>prompt</code>,
+                <code>choices[]</code>, and optional <code>effects</code> (score, flags, inventory, time, detection
+                risk).
+              </div>
+            </li>
+            <li>
+              <b>Compile to a normalized graph</b>
+              <div class="note">Convert markdown / JSON / YAML into a single canonical graph model (nodes + edges +
+                metadata).</div>
+            </li>
+            <li>
+              <b>Validate</b>
+              <div class="note">Fail fast on broken content: missing node ids, dead links, unreachable endings, cycles
+                (if disallowed), and invalid effects.</div>
+            </li>
+            <li>
+              <b>Instrument &amp; balance</b>
+              <div class="note">Compute helpful analytics: path lengths, expected risk, â€œdominant choiceâ€ detection, and
+                story coverage.</div>
+            </li>
+            <li>
+              <b>Render a playable experience</b>
+              <div class="note">Use the normalized graph to drive a UI: show prompt, show choices, apply effects, track
+                state, and record a run log.</div>
+            </li>
+            <li>
+              <b>Export outcomes</b>
+              <div class="note">Output the run transcript (JSON + human summary) for learning, audits, or classroom
+                review.</div>
+            </li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>
+            <h3>Minimal node format</h3>
+          </summary>
+          <img src="assets/banner_node_format.png" data-src-en="assets/banner_node_format.png"
+            data-src-fr="assets/fr_banner_node.png" alt="Nano Banana Node Format" class="banner-image">
+          <pre class="terminal-emulator"><code>{
+  <span class="k">"id"</span>: "start",
+  <span class="k">"prompt"</span>: "You receive an email claiming to be from IT...",
+  <span class="k">"choices"</span>: [
+    {<span class="k">"label"</span>: "Click the link", <span class="k">"to"</span>: "phished", <span class="k">"effects"</span>: {<span class="k">"risk"</span>: "+=20"}},
+    {<span class="k">"label"</span>: "Report to security", <span class="k">"to"</span>: "good_call", <span class="k">"effects"</span>: {<span class="k">"risk"</span>: "-=5", <span class="k">"badge"</span>: "reporter"}}
+  ]
+}</code></pre>
+        </details>
+
+        <details>
+          <summary>
+            <h3>Pipeline sketch</h3>
+          </summary>
+          <img src="assets/banner_pipeline.png" data-src-en="assets/banner_pipeline.png"
+            data-src-fr="assets/fr_banner_pipeline.png" alt="Nano Banana Pipeline Sketch" class="banner-image">
+          <div class="flow" role="img" aria-label="Author â†’ compile â†’ validate â†’ run â†’ export">
+            <svg viewBox="0 0 980 140" width="980" height="140" style="max-width:100%;height:auto">
+              <defs>
+                <linearGradient id="g" x1="0" x2="1">
+                  <stop offset="0" stop-color="#00ffff" stop-opacity="0.9" /> <!-- cyan -->
+                  <stop offset="1" stop-color="#ff00ff" stop-opacity="0.9" /> <!-- magenta -->
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="980" height="140" rx="14" fill="#000000" />
+              <!-- boxes -->
+              <g font-family="ui-monospace, Menlo, monospace" font-size="14" fill="#00ffff"> <!-- cyan base text -->
+                <rect x="18" y="36" width="170" height="64" rx="12" fill="#000" stroke="#00ffff" stroke-width="2" />
+                <!-- cyan box -->
+                <text x="103" y="64" text-anchor="middle" font-weight="bold">AUTHOR</text>
+                <text x="103" y="84" text-anchor="middle" fill="#ff00ff">markdown/json</text> <!-- magenta sub text -->
+
+                <rect x="214" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ff00ff" stroke-width="2" />
+                <!-- magenta box -->
+                <text x="299" y="64" text-anchor="middle" fill="#ff00ff" font-weight="bold">COMPILE</text>
+                <text x="299" y="84" text-anchor="middle" fill="#00ffff">normalize graph</text>
+
+                <rect x="410" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ff9900" stroke-width="2" />
+                <!-- orange box -->
+                <text x="495" y="64" text-anchor="middle" fill="#ff9900" font-weight="bold">VALIDATE</text>
+                <text x="495" y="84" text-anchor="middle" fill="#ffff00">dead ends, loops</text> <!-- yellow text -->
+
+                <rect x="606" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ffff00" stroke-width="2" />
+                <!-- yellow box -->
+                <text x="691" y="64" text-anchor="middle" fill="#ffff00" font-weight="bold">RUN</text>
+                <text x="691" y="84" text-anchor="middle" fill="#ff9900">state + choices</text>
+
+                <rect x="802" y="36" width="160" height="64" rx="12" fill="#000" stroke="#00ffff" stroke-width="2" />
+                <!-- cyan return -->
+                <text x="882" y="64" text-anchor="middle" fill="#00ffff" font-weight="bold">EXPORT</text>
+                <text x="882" y="84" text-anchor="middle" fill="#ff00ff">log + summary</text>
+
+                <!-- arrows -->
+                <path d="M188 68 L214 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
+                <path d="M384 68 L410 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
+                <path d="M580 68 L606 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
+                <path d="M776 68 L802 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
+              </g>
+            </svg>
+            <div id="pacman-loader" class="pacman-loader">[C . author . . . compile . . . validate . . . run . . .
+              export ] 0%</div>
+          </div>
+
+        <section class="card">
+        <details open>
+          <summary>
+            <h2 data-i18n="step_by_step_title">Step-by-step process (proposed)</h2>
+          </summary>
+          <img src="assets/banner_process.png" data-src-en="assets/banner_process.png"
+            data-src-fr="assets/fr_banner_process.png" alt="Nano Banana Step-by-step Process" class="banner-image">
+          <ol>
+            <li>
+              <b>Author scenarios</b>
+              <div class="note">Write each decision point as a node with: <code>id</code>, <code>prompt</code>,
+                <code>choices[]</code>, and optional <code>effects</code> (score, flags, inventory, time, detection
+                risk).
+              </div>
+            </li>
+            <li>
+              <b>Compile to a normalized graph</b>
+              <div class="note">Convert markdown / JSON / YAML into a single canonical graph model (nodes + edges +
+                metadata).</div>
+            </li>
+            <li>
+              <b>Validate</b>
+              <div class="note">Fail fast on broken content: missing node ids, dead links, unreachable endings, cycles
+                (if disallowed), and invalid effects.</div>
+            </li>
+            <li>
+              <b>Instrument &amp; balance</b>
+              <div class="note">Compute helpful analytics: path lengths, expected risk, â€œdominant choiceâ€ detection, and
+                story coverage.</div>
+            </li>
+            <li>
+              <b>Render a playable experience</b>
+              <div class="note">Use the normalized graph to drive a UI: show prompt, show choices, apply effects, track
+                state, and record a run log.</div>
+            </li>
+            <li>
+              <b>Export outcomes</b>
+              <div class="note">Output the run transcript (JSON + human summary) for learning, audits, or classroom
+                review.</div>
+            </li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>
+            <h3>Minimal node format</h3>
+          </summary>
+          <img src="assets/banner_node_format.png" data-src-en="assets/banner_node_format.png"
+            data-src-fr="assets/fr_banner_node.png" alt="Nano Banana Node Format" class="banner-image">
+          <pre class="terminal-emulator"><code>{
+  <span class="k">"id"</span>: "start",
+  <span class="k">"prompt"</span>: "You receive an email claiming to be from IT...",
+  <span class="k">"choices"</span>: [
+    {<span class="k">"label"</span>: "Click the link", <span class="k">"to"</span>: "phished", <span class="k">"effects"</span>: {<span class="k">"risk"</span>: "+=20"}},
+    {<span class="k">"label"</span>: "Report to security", <span class="k">"to"</span>: "good_call", <span class="k">"effects"</span>: {<span class="k">"risk"</span>: "-=5", <span class="k">"badge"</span>: "reporter"}}
+  ]
+}</code></pre>
+        </details>
+
+        <details>
+          <summary>
+            <h3>Pipeline sketch</h3>
+          </summary>
+          <img src="assets/banner_pipeline.png" data-src-en="assets/banner_pipeline.png"
+            data-src-fr="assets/fr_banner_pipeline.png" alt="Nano Banana Pipeline Sketch" class="banner-image">
+          <div class="flow" role="img" aria-label="Author â†’ compile â†’ validate â†’ run â†’ export">
+            <svg viewBox="0 0 980 140" width="980" height="140" style="max-width:100%;height:auto">
+              <defs>
+                <linearGradient id="g" x1="0" x2="1">
+                  <stop offset="0" stop-color="#00ffff" stop-opacity="0.9" /> <!-- cyan -->
+                  <stop offset="1" stop-color="#ff00ff" stop-opacity="0.9" /> <!-- magenta -->
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="980" height="140" rx="14" fill="#000000" />
+              <!-- boxes -->
+              <g font-family="ui-monospace, Menlo, monospace" font-size="14" fill="#00ffff"> <!-- cyan base text -->
+                <rect x="18" y="36" width="170" height="64" rx="12" fill="#000" stroke="#00ffff" stroke-width="2" />
+                <!-- cyan box -->
+                <text x="103" y="64" text-anchor="middle" font-weight="bold">AUTHOR</text>
+                <text x="103" y="84" text-anchor="middle" fill="#ff00ff">markdown/json</text> <!-- magenta sub text -->
+
+                <rect x="214" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ff00ff" stroke-width="2" />
+                <!-- magenta box -->
+                <text x="299" y="64" text-anchor="middle" fill="#ff00ff" font-weight="bold">COMPILE</text>
+                <text x="299" y="84" text-anchor="middle" fill="#00ffff">normalize graph</text>
+
+                <rect x="410" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ff9900" stroke-width="2" />
+                <!-- orange box -->
+                <text x="495" y="64" text-anchor="middle" fill="#ff9900" font-weight="bold">VALIDATE</text>
+                <text x="495" y="84" text-anchor="middle" fill="#ffff00">dead ends, loops</text> <!-- yellow text -->
+
+                <rect x="606" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ffff00" stroke-width="2" />
+                <!-- yellow box -->
+                <text x="691" y="64" text-anchor="middle" fill="#ffff00" font-weight="bold">RUN</text>
+                <text x="691" y="84" text-anchor="middle" fill="#ff9900">state + choices</text>
+
+                <rect x="802" y="36" width="160" height="64" rx="12" fill="#000" stroke="#00ffff" stroke-width="2" />
+                <!-- cyan return -->
+                <text x="882" y="64" text-anchor="middle" fill="#00ffff" font-weight="bold">EXPORT</text>
+                <text x="882" y="84" text-anchor="middle" fill="#ff00ff">log + summary</text>
+
+                <!-- arrows -->
+                <path d="M188 68 L214 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
+                <path d="M384 68 L410 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
+                <path d="M580 68 L606 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
+                <path d="M776 68 L802 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
+              </g>
+            </svg>
+            <div id="pacman-loader" class="pacman-loader">[C . author . . . compile . . . validate . . . run . . .
+              export ] 0%</div>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <h3>Design goals (philosophy lab vibes)</h3>
+          </summary>
+          <img src="assets/banner_design_goals.png" data-src-en="assets/banner_design_goals.png"
+            data-src-fr="assets/fr_banner_goals.png" alt="Nano Banana Design Goals" class="banner-image">
+
+          <div class="comic-coupon">
+            <span class="scissors">âœ‚ï¸</span>
+            <div><span class="good">Citizens survive</span> by default: the world is coherent and self-consistent.</div>
+            <div><span class="warn">Player interventions</span> create tradeoffs (security vs speed, stealth vs
+              certainty, etc.).</div>
+            <div><span class="bad">Bad endings</span> are teachable and explain <i>why</i> (not just â€œyou loseâ€).</div>
+          </div>
+        </details>
+      </section>
+
+        <section class="card" id="n8n-section">
+        <details open>
+          <summary>
+            <h2 data-i18n="n8n_title">n8n Gamification Engine</h2>
+          </summary>
+          <div class="note" style="margin-top: 10px;" data-i18n="n8n_desc">The current site is a Minimum Viable Product.
+            The n8n process will
+            augment this by bridging Enterprise Content Management with Generative AI and Gamification.</div>
+          <a href="n8n_architecture.md" class="game-btn secondary"
+            style="display:inline-block; text-align:center; box-sizing: border-box; margin-top: 12px; margin-bottom: 10px; color: var(--accent); width: 100%;"
+            data-i18n="n8n_link">View
+            Architecture Proposal</a>
+        </details>
+
+        <details>
+          <summary>
+            <h2>Suggested next files</h2>
+          </summary>
+          <img src="assets/banner_next_files.png" data-src-en="assets/banner_next_files.png"
+            data-src-fr="assets/fr_banner_files.png" alt="Nano Banana Next Files" class="banner-image">
+          <div class="note">If this repo stays tiny, these are the pieces that make it feel â€œrealâ€ fast.</div>
+          <ol>
+            <li><code>scenarios/</code> â€” sample adventures (phishing, USB drop, password reset, insider risk).</li>
+            <li><code>schema.json</code> â€” JSON Schema for node/graph validation.</li>
+            <li><code>compiler.js</code> â€” parse â†’ normalize graph.</li>
+            <li><code>validator.js</code> â€” structural + semantic checks.</li>
+            <li><code>runner.js</code> â€” applies effects, records transcript.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>
+            <h3>Open questions</h3>
+          </summary>
+          <img src="assets/banner_questions.png" data-src-en="assets/banner_questions.png"
+            data-src-fr="assets/fr_banner_questions.png" alt="Nano Banana Open Questions" class="banner-image">
+          <ul>
+            <li>Primary authoring format: markdown, yaml, or json?</li>
+            <li>Do we allow cycles/loops ("investigate more")?</li>
+            <li>Do we track state as numeric risk, flags, inventoryâ€¦ or all three?</li>
+          </ul>
+        </details>
+
+        <p class="note">Refactoring reality one quanta at a time</p>
+      </section>
+
+        <!-- Ishikawa (Fishbone) Discovery Integration -->
+        <section class="card" id="ishikawa-discovery">
+          <h2 data-i18n="ishikawa_title" style="margin-top:0;">Ishikawa (Fishbone) Discovery Phase</h2>
+          <div class="note" style="margin-bottom: 12px;" data-i18n="ishikawa_desc">
+            Vulnerability mapping phase: Add or remove root causes under each of the 6M categories to customize the diagram.
+          </div>
+          
+          <div class="fishbone-canvas-container" id="fishbone-container">
+            <canvas id="fishboneCanvas" width="1600" height="900"></canvas>
+            <button class="close-fullscreen-btn" onclick="toggleFishboneFullscreen()" title="Close Fullscreen">Ã—</button>
+            <button class="fullscreen-btn" onclick="toggleFishboneFullscreen()" title="Toggle Fullscreen">ðŸ”</button>
+          </div>
+          
+          <div class="fishbone-controls">
+            <div class="fishbone-inputs-grid" id="fishbone-inputs">
+              <!-- Dynamically generated inputs -->
+            </div>
+            <div class="fishbone-actions" style="margin-top: 20px; display: flex; gap: 10px;">
+              <button class="game-btn" onclick="resetFishboneToDefault()">Reset Defaults</button>
+              <button class="game-btn secondary" onclick="exportFishboneDiagram()">Download PNG</button>
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          Generated as an overview index page. Repo: <a href="https://github.com/polerix/security-adventure">polerix/security-adventure</a>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        nav_adventure: "choose-your-own-adventure",
+        nav_training: "security training",
+        nav_process: "processor + renderer",
+        hero_sub: "A small â€œwhat-ifâ€ engine for security stories: write scenarios as structured nodes, compile them, validate them, and run them as a playable adventure (web, CLI, or both).",
+        mod1_title: "Module 1",
+        mod1_desc: "The Curious Case of the Lost Drive",
+        mod2_title: "Module 2",
+        mod2_desc: "The Doorway Dilemma",
+        placeholder: "Select a training module above to begin.",
+        n8n_title: "n8n Gamification Engine",
+        n8n_desc: "The current site is a Minimum Viable Product. The n8n process will augment this by bridging Enterprise Content Management with Generative AI and Gamification.",
+        n8n_link: "View Architecture Proposal",
+        app_title: "security-adventure",
+        step_by_step_title: "Step-by-step process (proposed)",
+        ishikawa_title: "Ishikawa (Fishbone) Discovery Phase",
+        ishikawa_desc: "Vulnerability mapping phase: Add or remove root causes under each of the 6M categories to customize the diagram."
+      },
+      fr: {
+        nav_adventure: "choisissez-votre-aventure",
+        nav_training: "formation en sÃ©curitÃ©",
+        nav_process: "processeur + moteur de rendu",
+        hero_sub: "Un petit moteur Â« et si Â» pour les histoires de sÃ©curitÃ© : Ã©crivez des scÃ©narios comme des nÅ“uds structurÃ©s, compilez-les, validez-les et exÃ©cutez-les comme une aventure jouable (web, console, ou les deux).",
+        mod1_title: "Module 1",
+        mod1_desc: "L'Ã‰trange Affaire de la ClÃ© USB Perdue",
+        mod2_title: "Module 2",
+        mod2_desc: "Le Dilemme de la Porte",
+        placeholder: "SÃ©lectionnez un module de formation ci-dessus pour commencer.",
+        n8n_title: "Moteur de Ludification n8n",
+        n8n_desc: "Le site actuel est un Produit Minimum Viable. Le processus n8n viendra l'augmenter en reliant la Gestion de Contenu d'Entreprise Ã  l'IA GÃ©nÃ©rative et Ã  la Ludification.",
+        n8n_link: "Voir la proposition d'architecture",
+        app_title: "Aventure de SÃ©curitÃ©",
+        step_by_step_title: "Processus Ã©tape par Ã©tape (proposÃ©)",
+        ishikawa_title: "Phase de DÃ©couverte d'Ishikawa (Diagramme en Poisson)",
+        ishikawa_desc: "Phase de cartographie des vulnÃ©rabilitÃ©s : Ajoutez ou supprimez des causes sous chacune des catÃ©gories 6M pour personnaliser le diagramme."
+      }
+    };
+
+    window.setUiLang = function (lang) {
+      if (window.setLang) window.setLang(lang); // Updates game.js state
+
+      // Update UI buttons
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      const activeBtn = document.getElementById('lang-' + lang);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+
+      // Translate DOM elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.innerText = translations[lang][key];
+        }
+      });
+
+      // Update Localized Images
+      document.querySelectorAll('img[data-src-en]').forEach(img => {
+        img.src = img.getAttribute('data-src-' + lang);
+      });
+
+      // Redraw Ishikawa diagram to localize canvas labels
+      if (window.drawFishbone) {
+        window.drawFishbone();
+      }
+    }
+
+    // Initialize UI language
+    const initLang = localStorage.getItem('sa-lang') || 'en';
+
+    // Add wait for game.js to load to set current language
+    window.addEventListener('DOMContentLoaded', () => {
+      window.setUiLang(initLang);
+    });
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('theme-' + theme);
+      if (activeBtn) activeBtn.classList.add('active');
+      localStorage.setItem('sa-theme', theme);
+    }
+    // Default to comic theme if none selected
+    const savedTheme = localStorage.getItem('sa-theme') || 'comic';
+    setTheme(savedTheme);
+
+    function scrollToCard(e, id) {
+      if (e) e.preventDefault();
+      const el = document.getElementById(id);
+      const rightPanel = document.getElementById('right-content-panel');
+      if (el && rightPanel) {
+        // Scroll the right panel container
+        const targetOffset = el.offsetTop - 24; // offset padding
+        rightPanel.scrollTo({
+          top: targetOffset,
+          behavior: 'smooth'
+        });
+      }
+    }
+  </script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const loader = document.getElementById('pacman-loader');
+      if (!loader) return;
+
+      const chunks = [
+        { text: " . ", color: "#ffffff" },
+        { text: "author", color: "#00ffff" },
+        { text: " . .  ", color: "#ffffff" },
+        { text: "compile", color: "#ff00ff" },
+        { text: " . .  ", color: "#ffffff" },
+        { text: "validate", color: "#ff9900" },
+        { text: " . . ", color: "#ffffff" },
+        { text: "run", color: "#ffff00" },
+        { text: "  . . ", color: "#ffffff" },
+        { text: "export", color: "#00ffff" },
+        { text: " ", color: "#ffffff" }
+      ];
+
+      const trackChars = [];
+      chunks.forEach(chunk => {
+        for (let char of chunk.text) {
+          trackChars.push({ char, color: chunk.color });
+        }
+      });
+
+      let pos = 0;
+
+      setInterval(() => {
+        let html = '<span style="color:#ffffff">[</span><span style="color:#ffff00; text-shadow: 0 0 4px #ff9900;">';
+        html += '-'.repeat(pos);
+        html += (pos % 2 === 0 ? 'C' : 'c');
+        html += '</span>';
+
+        let lastColor = null;
+        for (let j = pos + 1; j < trackChars.length; j++) {
+          let tc = trackChars[j];
+          if (tc.color !== lastColor) {
+            if (lastColor !== null) html += '</span>';
+            html += `<span style="color:${tc.color}; text-shadow: 0 0 3px ${tc.color};">`;
+            lastColor = tc.color;
+          }
+          html += tc.char;
+        }
+        if (lastColor !== null) html += '</span>';
+
+        // Calculate percentage tracking the length of strings vs characters eaten
+        const pct = Math.floor((pos / (trackChars.length - 1)) * 100);
+        html += `<span style="color:#ffffff">]</span> <span style="color:#00ffff">${pct.toString().padStart(3, ' ')}%</span>`;
+
+        loader.innerHTML = html;
+
+        pos++;
+        if (pos >= trackChars.length) pos = 0;
+      }, 150);
+    });
+  </script>
+
+  <script>
+    // Ishikawa Diagram State & Controller
+    const defaultFishboneState = {
+      problem: 'Security Vulnerabilities',
+      men: [
+        'Convenience overrides security policy',
+        'Susceptibility to social engineering',
+        'Lack of role-based security training'
+      ],
+      methods: [
+        'Tailgating reporting path is unclear',
+        'No verification process for strangers',
+        'Dashed/informal security policies'
+      ],
+      materials: [
+        'Insecure keycards and access badges',
+        'Unlabeled and unverified USB drives',
+        'Lack of visible security warnings'
+      ],
+      machines: [
+        'Workstations left unlocked in public',
+        'No automatic USB device blocking',
+        'Unencrypted data on local drives'
+      ],
+      measurement: [
+        'No audit logs for side entrance scans',
+        'Lack of key performance metrics (phishing)',
+        'Infrequent physical security audits'
+      ],
+      environment: [
+        'Parking lot has blind spots/unmonitored',
+        'Crowded side entrance creates tailgating',
+        'Breakroom is publicly accessible to visitors'
+      ]
+    };
+
+    let fishboneState = JSON.parse(JSON.stringify(defaultFishboneState));
+
+    function initFishbone() {
+      renderFishboneInputs();
+      drawFishbone();
+      
+      // Auto-draw when inputs change
+      window.addEventListener('resize', drawFishbone);
+    }
+
+    function renderFishboneInputs() {
+      const container = document.getElementById('fishbone-inputs');
+      if (!container) return;
+      
+      const currentLang = localStorage.getItem('sa-lang') || 'en';
+      
+      const categoryLabels = {
+        en: {
+          men: 'Men (People)',
+          methods: 'Methods',
+          materials: 'Materials',
+          machines: 'Machines',
+          measurement: 'Measurement',
+          environment: 'Environment'
+        },
+        fr: {
+          men: "Main-d'Å“uvre (Gens)",
+          methods: 'MÃ©thodes',
+          materials: 'MatiÃ¨res',
+          machines: 'Machines',
+          measurement: 'Mesures',
+          environment: 'Milieu (Env)'
+        }
+      };
+
+      const categories = [
+        { key: 'men', label: categoryLabels[currentLang].men },
+        { key: 'methods', label: categoryLabels[currentLang].methods },
+        { key: 'materials', label: categoryLabels[currentLang].materials },
+        { key: 'machines', label: categoryLabels[currentLang].machines },
+        { key: 'measurement', label: categoryLabels[currentLang].measurement },
+        { key: 'environment', label: categoryLabels[currentLang].environment }
+      ];
+
+      container.innerHTML = categories.map(cat => {
+        const causes = fishboneState[cat.key];
+        const inputsHTML = causes.map((cause, idx) => `
+          <div class="cause-input">
+            <input type="text" value="${escapeHtml(cause)}" oninput="updateFishboneCause('${cat.key}', ${idx}, this.value)" placeholder="Enter cause...">
+            <button class="remove-btn" onclick="removeFishboneCause('${cat.key}', ${idx})">Ã—</button>
+          </div>
+        `).join('');
+
+        return `
+          <div class="cause-column">
+            <h3>${cat.label}</h3>
+            <div class="cause-items">${inputsHTML}</div>
+            <button class="add-btn" onclick="addFishboneCause('${cat.key}')">+ Add Cause</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function updateFishboneCause(category, idx, val) {
+      fishboneState[category][idx] = val;
+      drawFishbone();
+    }
+
+    function addFishboneCause(category) {
+      fishboneState[category].push('');
+      renderFishboneInputs();
+      drawFishbone();
+    }
+
+    function removeFishboneCause(category, idx) {
+      fishboneState[category].splice(idx, 1);
+      renderFishboneInputs();
+      drawFishbone();
+    }
+
+    function resetFishboneToDefault() {
+      fishboneState = JSON.parse(JSON.stringify(defaultFishboneState));
+      renderFishboneInputs();
+      drawFishbone();
+    }
+
+    function toggleFishboneFullscreen() {
+      const el = document.getElementById('fishbone-container');
+      if (el) {
+        el.classList.toggle('fullscreen');
+        drawFishbone();
+      }
+    }
+
+    function drawFishbone() {
+      const canvas = document.getElementById('fishboneCanvas');
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear & Draw base
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+      
+      const centerY = height / 2;
+      
+      // Spine
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(80, centerY);
+      ctx.lineTo(width - 240, centerY);
+      ctx.stroke();
+      
+      // Head (Problem Box)
+      const headX = width - 240;
+      const headW = 200;
+      const headH = 80;
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#ef4123'; // DC Red
+      ctx.strokeRect(headX, centerY - headH/2, headW, headH);
+      ctx.fillStyle = '#fef3c7'; // Cream bg
+      ctx.fillRect(headX + 2, centerY - headH/2 + 2, headW - 4, headH - 4);
+      
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      const currentLang = localStorage.getItem('sa-lang') || 'en';
+      const problemText = currentLang === 'fr' ? 'VulnÃ©rabilitÃ©s de SÃ©curitÃ©' : 'Security Vulnerabilities';
+      ctx.fillText(problemText, headX + headW/2, centerY);
+      
+      // Category Labels in localized format
+      const categoryLabels = {
+        en: {
+          men: 'Men (People)',
+          methods: 'Methods',
+          materials: 'Materials',
+          machines: 'Machines',
+          measurement: 'Measurement',
+          environment: 'Environment'
+        },
+        fr: {
+          men: "Main-d'Å“uvre",
+          methods: 'MÃ©thodes',
+          materials: 'MatiÃ¨res',
+          machines: 'Machines',
+          measurement: 'Mesures',
+          environment: 'Milieu'
+        }
+      };
+
+      const bones = [
+        { key: 'men', label: categoryLabels[currentLang].men, pos: 0.18, side: 'top' },
+        { key: 'methods', label: categoryLabels[currentLang].methods, pos: 0.35, side: 'bottom' },
+        { key: 'materials', label: categoryLabels[currentLang].materials, pos: 0.52, side: 'top' },
+        { key: 'machines', label: categoryLabels[currentLang].machines, pos: 0.69, side: 'bottom' },
+        { key: 'measurement', label: categoryLabels[currentLang].measurement, pos: 0.86, side: 'top' },
+        { key: 'environment', label: categoryLabels[currentLang].environment, pos: 0.95, side: 'bottom' }
+      ];
+
+      bones.forEach(bone => {
+        const startX = 80 + (width - 320) * bone.pos;
+        const angle = bone.side === 'top' ? -45 : 45;
+        const rad = angle * Math.PI / 180;
+        const length = 260;
+        const endX = startX + length * Math.cos(rad);
+        const endY = centerY + length * Math.sin(rad);
+        
+        // Main branch bone
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(startX, centerY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        
+        // Category Label
+        ctx.fillStyle = '#0ea5e9'; // Accent
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        
+        const labelOffsetY = bone.side === 'top' ? -15 : 22;
+        ctx.fillText(bone.label, endX, endY + labelOffsetY);
+        
+        // Causes (sub-bones)
+        const causes = fishboneState[bone.key] || [];
+        causes.forEach((cause, idx) => {
+          if (!cause) return;
+          
+          // Interpolate along the bone
+          const t = 0.25 + (idx + 1) * (0.6 / (causes.length || 1));
+          const causeX = startX + (endX - startX) * t;
+          const causeY = centerY + (endY - centerY) * t;
+          
+          // Horizontal line for cause text
+          const lineLength = 120;
+          const lineEndX = bone.side === 'top' ? causeX - lineLength : causeX + lineLength;
+          
+          ctx.strokeStyle = '#cbd5e1';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(causeX, causeY);
+          ctx.lineTo(lineEndX, causeY);
+          ctx.stroke();
+          
+          // Text
+          ctx.fillStyle = '#334155';
+          ctx.font = '13px sans-serif';
+          ctx.textAlign = bone.side === 'top' ? 'right' : 'left';
+          const textOffsetX = bone.side === 'top' ? -6 : 6;
+          
+          ctx.fillText(cause, lineEndX + textOffsetX, causeY - 6);
+        });
+      });
+    }
+
+    // Attach draw function globally so that language changes redraw it
+    window.drawFishbone = drawFishbone;
+
+    function exportFishboneDiagram() {
+      const canvas = document.getElementById('fishboneCanvas');
+      if (!canvas) return;
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'security-vulnerabilities-fishbone.png';
+      link.click();
+    }
+
+    // Call init on load
+    window.addEventListener('DOMContentLoaded', initFishbone);
+  </script>
+
+</body>
+
+</html>
+

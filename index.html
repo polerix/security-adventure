@@ -1,11 +1,11 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#0b0f19" />
-  <title>security-adventure — Process Overview</title>
+  <title>security-adventure â€” Process Overview</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -716,7 +716,7 @@
     }
 
     details>summary::before {
-      content: "▶";
+      content: "â–¶";
       position: absolute;
       left: 0;
       top: 2px;
@@ -778,7 +778,7 @@
       background: var(--panel-bg);
       border: var(--border-width-comic) solid var(--border-comic);
       border-radius: 16px;
-      padding: 24px;
+      padding: 16px;
       box-shadow: var(--game-card-shadow);
       margin-bottom: 24px;
     }
@@ -803,21 +803,16 @@
     }
 
     @media (min-width: 900px) {
-      .scenario-image {
-        display: none; /* Renders in Left Panel instead */
-      }
+      .right-panel .scenario-image { display: none; /* Renders in Left Panel instead */ }
     }
 
     .scenario-text {
       background: #f97316;
       border: 3px solid #000;
       color: #000;
-      padding: 18px;
-      border-radius: 12px;
-      font-size: 15px;
+      padding: 12px;$114px;
       font-weight: 600;
-      line-height: 1.6;
-      margin-bottom: 20px;
+      line-height: 1.5;$112px;
       white-space: pre-wrap;
       box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.8);
     }
@@ -831,7 +826,7 @@
       background: #f97316;
       border: 3px solid #000;
       color: #000;
-      padding: 16px;
+      padding: 10px;
       border-radius: 10px;
       cursor: pointer;
       text-align: left;
@@ -979,10 +974,12 @@
   <!-- Control Capsule (Theme + Language) -->
   <div class="control-capsule">
     <div class="theme-controls">
-      <button class="theme-btn" onclick="setTheme('light')" id="theme-light" title="Professional Light">☀️</button>
-      <button class="theme-btn" onclick="setTheme('dark')" id="theme-dark" title="Professional Dark">🌙</button>
-      <button class="theme-btn" onclick="setTheme('comic')" id="theme-comic" title="Comic Book / Accessible High Contrast">🅰️</button>
+      <button class="theme-btn" onclick="setTheme('light')" id="theme-light" title="Professional Light">â˜€ï¸</button>
+      <button class="theme-btn" onclick="setTheme('dark')" id="theme-dark" title="Professional Dark">ðŸŒ™</button>
+      <button class="theme-btn" onclick="setTheme('comic')" id="theme-comic" title="Comic Book / Accessible High Contrast">ðŸ…°ï¸</button>
     </div>
+    <span class="capsule-divider">|</span>
+    <button class="theme-btn" onclick="window.location.href='tech.html'" style="font-size: 16px;" title="Tech Information">⚙️</button>
     <span class="capsule-divider">|</span>
     <div class="lang-controls">
       <button class="lang-btn active" id="lang-en" onclick="window.setUiLang('en')">EN</button>
@@ -1000,9 +997,9 @@
         </div>
         <div class="sub-nav-pills" style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
           <a href="#game-container" class="pill" onclick="scrollToCard(event, 'game-container')" data-i18n="nav_adventure">choose-your-own-adventure</a>
-          <a href="#cdps-scaling" class="pill" onclick="scrollToCard(event, 'cdps-scaling')" data-i18n="nav_cdps">cdps ai scaling</a>
-          <a href="#process-overview" class="pill" onclick="scrollToCard(event, 'process-overview')" data-i18n="nav_process">processor + renderer</a>
-          <a href="#ishikawa-discovery" class="pill" onclick="scrollToCard(event, 'ishikawa-discovery')">ishikawa discovery</a>
+          <a href="tech.html#cdps-scaling" class="pill" onclick="scrollToCard(event, 'cdps-scaling')" data-i18n="nav_cdps">cdps ai scaling</a>
+          <a href="tech.html#process-overview" class="pill" onclick="scrollToCard(event, 'process-overview')" data-i18n="nav_process">processor + renderer</a>
+          <a href="tech.html#ishikawa-discovery" class="pill" onclick="scrollToCard(event, 'ishikawa-discovery')">ishikawa discovery</a>
         </div>
       </div>
       
@@ -1034,368 +1031,6 @@
           <div class="placeholder-text" data-i18n="placeholder">Select a training module above to begin.</div>
         </div>
 
-        <!-- Technical Implementation Section -->
-        <div id="cdps-scaling" class="card" >
-      <section class="card">
-        <details>
-          <summary>
-            <h2 data-i18n="cdps_title">CDPS AI Scaling & Data Residency</h2>
-          </summary>
-          <div class="note" style="margin-bottom: 12px;">The Chief Data and Policy Strategy (CDPS) branch architecture
-            for analyzing 10,000+ public consultation entries while adhering to Protected B data sovereignty.</div>
-
-          <img src="assets/banner_pipeline.png" alt="CDPS Pipeline" class="banner-image"
-            style="filter: hue-rotate(120deg);"> <!-- Repurposed visual for prototype -->
-
-          <h3>1. High-Volume Batch Processing</h3>
-          <p class="note">N8n workflows configured with internal looping and queue management to digest thousands of
-            records over time without hitting API timeouts.</p>
-
-          <h3>2. "Sliding Window" Context Management</h3>
-          <p class="note">A Python-based <code>chunking_utility.py</code> securely structures long PDF/Word documents
-            into overlapping RAG-optimized pieces while perfectly preserving root ECCC metadata (consultation ID, entry
-            ID).</p>
-
-          <h3>3. Automated Metadata Validator</h3>
-          <p class="note">An integrated pre-processor (<code>metadata_validator.py</code>) verifies incoming data
-            against standard <strong>ECCC Controlled Vocabularies</strong> (e.g., verified Regions and Themes) before
-            executing expensive GenAI operations.</p>
-
-          <h3>4. Bilingual Parity Auditor</h3>
-          <ol>
-            <li>
-              <b>Mandatory Translation Parity:</b>
-              <div class="note">Triggers parallel analysis for French and English sources using Azure OpenAI endpoints
-                based strictly in <u>Canada East</u>.</div>
-            </li>
-            <li>
-              <b>Mathematical Drift Detection:</b>
-              <div class="note">Analyzes sentiment outputs from both streams, calculating divergence. If the 'linguistic
-                drift' exceeds the tolerance threshold, it flags the entry for human CDPS review via a Teams bot
-                webhook.</div>
-            </li>
-          </ol>
-
-          <div class="note" style="margin-top: 16px;">
-            📄 Read the full technical blueprint: <a href="CDPS-Scaling.md" target="_blank">CDPS-Scaling.md</a>
-          </div>
-        </details>
-      </section>
-    </div>
-
-    <div id="process-overview" class="card">
-      <section class="card">
-        <details open>
-          <summary>
-            <h2 data-i18n="step_by_step_title">Step-by-step process (proposed)</h2>
-          </summary>
-          <img src="assets/banner_process.png" data-src-en="assets/banner_process.png"
-            data-src-fr="assets/fr_banner_process.png" alt="Nano Banana Step-by-step Process" class="banner-image">
-          <ol>
-            <li>
-              <b>Author scenarios</b>
-              <div class="note">Write each decision point as a node with: <code>id</code>, <code>prompt</code>,
-                <code>choices[]</code>, and optional <code>effects</code> (score, flags, inventory, time, detection
-                risk).
-              </div>
-            </li>
-            <li>
-              <b>Compile to a normalized graph</b>
-              <div class="note">Convert markdown / JSON / YAML into a single canonical graph model (nodes + edges +
-                metadata).</div>
-            </li>
-            <li>
-              <b>Validate</b>
-              <div class="note">Fail fast on broken content: missing node ids, dead links, unreachable endings, cycles
-                (if disallowed), and invalid effects.</div>
-            </li>
-            <li>
-              <b>Instrument &amp; balance</b>
-              <div class="note">Compute helpful analytics: path lengths, expected risk, “dominant choice” detection, and
-                story coverage.</div>
-            </li>
-            <li>
-              <b>Render a playable experience</b>
-              <div class="note">Use the normalized graph to drive a UI: show prompt, show choices, apply effects, track
-                state, and record a run log.</div>
-            </li>
-            <li>
-              <b>Export outcomes</b>
-              <div class="note">Output the run transcript (JSON + human summary) for learning, audits, or classroom
-                review.</div>
-            </li>
-          </ol>
-        </details>
-
-        <details>
-          <summary>
-            <h3>Minimal node format</h3>
-          </summary>
-          <img src="assets/banner_node_format.png" data-src-en="assets/banner_node_format.png"
-            data-src-fr="assets/fr_banner_node.png" alt="Nano Banana Node Format" class="banner-image">
-          <pre class="terminal-emulator"><code>{
-  <span class="k">"id"</span>: "start",
-  <span class="k">"prompt"</span>: "You receive an email claiming to be from IT...",
-  <span class="k">"choices"</span>: [
-    {<span class="k">"label"</span>: "Click the link", <span class="k">"to"</span>: "phished", <span class="k">"effects"</span>: {<span class="k">"risk"</span>: "+=20"}},
-    {<span class="k">"label"</span>: "Report to security", <span class="k">"to"</span>: "good_call", <span class="k">"effects"</span>: {<span class="k">"risk"</span>: "-=5", <span class="k">"badge"</span>: "reporter"}}
-  ]
-}</code></pre>
-        </details>
-
-        <details>
-          <summary>
-            <h3>Pipeline sketch</h3>
-          </summary>
-          <img src="assets/banner_pipeline.png" data-src-en="assets/banner_pipeline.png"
-            data-src-fr="assets/fr_banner_pipeline.png" alt="Nano Banana Pipeline Sketch" class="banner-image">
-          <div class="flow" role="img" aria-label="Author → compile → validate → run → export">
-            <svg viewBox="0 0 980 140" width="980" height="140" style="max-width:100%;height:auto">
-              <defs>
-                <linearGradient id="g" x1="0" x2="1">
-                  <stop offset="0" stop-color="#00ffff" stop-opacity="0.9" /> <!-- cyan -->
-                  <stop offset="1" stop-color="#ff00ff" stop-opacity="0.9" /> <!-- magenta -->
-                </linearGradient>
-              </defs>
-              <rect x="0" y="0" width="980" height="140" rx="14" fill="#000000" />
-              <!-- boxes -->
-              <g font-family="ui-monospace, Menlo, monospace" font-size="14" fill="#00ffff"> <!-- cyan base text -->
-                <rect x="18" y="36" width="170" height="64" rx="12" fill="#000" stroke="#00ffff" stroke-width="2" />
-                <!-- cyan box -->
-                <text x="103" y="64" text-anchor="middle" font-weight="bold">AUTHOR</text>
-                <text x="103" y="84" text-anchor="middle" fill="#ff00ff">markdown/json</text> <!-- magenta sub text -->
-
-                <rect x="214" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ff00ff" stroke-width="2" />
-                <!-- magenta box -->
-                <text x="299" y="64" text-anchor="middle" fill="#ff00ff" font-weight="bold">COMPILE</text>
-                <text x="299" y="84" text-anchor="middle" fill="#00ffff">normalize graph</text>
-
-                <rect x="410" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ff9900" stroke-width="2" />
-                <!-- orange box -->
-                <text x="495" y="64" text-anchor="middle" fill="#ff9900" font-weight="bold">VALIDATE</text>
-                <text x="495" y="84" text-anchor="middle" fill="#ffff00">dead ends, loops</text> <!-- yellow text -->
-
-                <rect x="606" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ffff00" stroke-width="2" />
-                <!-- yellow box -->
-                <text x="691" y="64" text-anchor="middle" fill="#ffff00" font-weight="bold">RUN</text>
-                <text x="691" y="84" text-anchor="middle" fill="#ff9900">state + choices</text>
-
-                <rect x="802" y="36" width="160" height="64" rx="12" fill="#000" stroke="#00ffff" stroke-width="2" />
-                <!-- cyan return -->
-                <text x="882" y="64" text-anchor="middle" fill="#00ffff" font-weight="bold">EXPORT</text>
-                <text x="882" y="84" text-anchor="middle" fill="#ff00ff">log + summary</text>
-
-                <!-- arrows -->
-                <path d="M188 68 L214 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
-                <path d="M384 68 L410 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
-                <path d="M580 68 L606 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
-                <path d="M776 68 L802 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
-              </g>
-            </svg>
-            <div id="pacman-loader" class="pacman-loader">[C . author . . . compile . . . validate . . . run . . .
-              export ] 0%</div>
-          </div>
-
-        <section class="card">
-        <details open>
-          <summary>
-            <h2 data-i18n="step_by_step_title">Step-by-step process (proposed)</h2>
-          </summary>
-          <img src="assets/banner_process.png" data-src-en="assets/banner_process.png"
-            data-src-fr="assets/fr_banner_process.png" alt="Nano Banana Step-by-step Process" class="banner-image">
-          <ol>
-            <li>
-              <b>Author scenarios</b>
-              <div class="note">Write each decision point as a node with: <code>id</code>, <code>prompt</code>,
-                <code>choices[]</code>, and optional <code>effects</code> (score, flags, inventory, time, detection
-                risk).
-              </div>
-            </li>
-            <li>
-              <b>Compile to a normalized graph</b>
-              <div class="note">Convert markdown / JSON / YAML into a single canonical graph model (nodes + edges +
-                metadata).</div>
-            </li>
-            <li>
-              <b>Validate</b>
-              <div class="note">Fail fast on broken content: missing node ids, dead links, unreachable endings, cycles
-                (if disallowed), and invalid effects.</div>
-            </li>
-            <li>
-              <b>Instrument &amp; balance</b>
-              <div class="note">Compute helpful analytics: path lengths, expected risk, “dominant choice” detection, and
-                story coverage.</div>
-            </li>
-            <li>
-              <b>Render a playable experience</b>
-              <div class="note">Use the normalized graph to drive a UI: show prompt, show choices, apply effects, track
-                state, and record a run log.</div>
-            </li>
-            <li>
-              <b>Export outcomes</b>
-              <div class="note">Output the run transcript (JSON + human summary) for learning, audits, or classroom
-                review.</div>
-            </li>
-          </ol>
-        </details>
-
-        <details>
-          <summary>
-            <h3>Minimal node format</h3>
-          </summary>
-          <img src="assets/banner_node_format.png" data-src-en="assets/banner_node_format.png"
-            data-src-fr="assets/fr_banner_node.png" alt="Nano Banana Node Format" class="banner-image">
-          <pre class="terminal-emulator"><code>{
-  <span class="k">"id"</span>: "start",
-  <span class="k">"prompt"</span>: "You receive an email claiming to be from IT...",
-  <span class="k">"choices"</span>: [
-    {<span class="k">"label"</span>: "Click the link", <span class="k">"to"</span>: "phished", <span class="k">"effects"</span>: {<span class="k">"risk"</span>: "+=20"}},
-    {<span class="k">"label"</span>: "Report to security", <span class="k">"to"</span>: "good_call", <span class="k">"effects"</span>: {<span class="k">"risk"</span>: "-=5", <span class="k">"badge"</span>: "reporter"}}
-  ]
-}</code></pre>
-        </details>
-
-        <details>
-          <summary>
-            <h3>Pipeline sketch</h3>
-          </summary>
-          <img src="assets/banner_pipeline.png" data-src-en="assets/banner_pipeline.png"
-            data-src-fr="assets/fr_banner_pipeline.png" alt="Nano Banana Pipeline Sketch" class="banner-image">
-          <div class="flow" role="img" aria-label="Author → compile → validate → run → export">
-            <svg viewBox="0 0 980 140" width="980" height="140" style="max-width:100%;height:auto">
-              <defs>
-                <linearGradient id="g" x1="0" x2="1">
-                  <stop offset="0" stop-color="#00ffff" stop-opacity="0.9" /> <!-- cyan -->
-                  <stop offset="1" stop-color="#ff00ff" stop-opacity="0.9" /> <!-- magenta -->
-                </linearGradient>
-              </defs>
-              <rect x="0" y="0" width="980" height="140" rx="14" fill="#000000" />
-              <!-- boxes -->
-              <g font-family="ui-monospace, Menlo, monospace" font-size="14" fill="#00ffff"> <!-- cyan base text -->
-                <rect x="18" y="36" width="170" height="64" rx="12" fill="#000" stroke="#00ffff" stroke-width="2" />
-                <!-- cyan box -->
-                <text x="103" y="64" text-anchor="middle" font-weight="bold">AUTHOR</text>
-                <text x="103" y="84" text-anchor="middle" fill="#ff00ff">markdown/json</text> <!-- magenta sub text -->
-
-                <rect x="214" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ff00ff" stroke-width="2" />
-                <!-- magenta box -->
-                <text x="299" y="64" text-anchor="middle" fill="#ff00ff" font-weight="bold">COMPILE</text>
-                <text x="299" y="84" text-anchor="middle" fill="#00ffff">normalize graph</text>
-
-                <rect x="410" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ff9900" stroke-width="2" />
-                <!-- orange box -->
-                <text x="495" y="64" text-anchor="middle" fill="#ff9900" font-weight="bold">VALIDATE</text>
-                <text x="495" y="84" text-anchor="middle" fill="#ffff00">dead ends, loops</text> <!-- yellow text -->
-
-                <rect x="606" y="36" width="170" height="64" rx="12" fill="#000" stroke="#ffff00" stroke-width="2" />
-                <!-- yellow box -->
-                <text x="691" y="64" text-anchor="middle" fill="#ffff00" font-weight="bold">RUN</text>
-                <text x="691" y="84" text-anchor="middle" fill="#ff9900">state + choices</text>
-
-                <rect x="802" y="36" width="160" height="64" rx="12" fill="#000" stroke="#00ffff" stroke-width="2" />
-                <!-- cyan return -->
-                <text x="882" y="64" text-anchor="middle" fill="#00ffff" font-weight="bold">EXPORT</text>
-                <text x="882" y="84" text-anchor="middle" fill="#ff00ff">log + summary</text>
-
-                <!-- arrows -->
-                <path d="M188 68 L214 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
-                <path d="M384 68 L410 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
-                <path d="M580 68 L606 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
-                <path d="M776 68 L802 68" stroke="url(#g)" stroke-width="4" stroke-linecap="round" class="svg-arrow" />
-              </g>
-            </svg>
-            <div id="pacman-loader" class="pacman-loader">[C . author . . . compile . . . validate . . . run . . .
-              export ] 0%</div>
-          </div>
-        </details>
-
-        <details>
-          <summary>
-            <h3>Design goals (philosophy lab vibes)</h3>
-          </summary>
-          <img src="assets/banner_design_goals.png" data-src-en="assets/banner_design_goals.png"
-            data-src-fr="assets/fr_banner_goals.png" alt="Nano Banana Design Goals" class="banner-image">
-
-          <div class="comic-coupon">
-            <span class="scissors">✂️</span>
-            <div><span class="good">Citizens survive</span> by default: the world is coherent and self-consistent.</div>
-            <div><span class="warn">Player interventions</span> create tradeoffs (security vs speed, stealth vs
-              certainty, etc.).</div>
-            <div><span class="bad">Bad endings</span> are teachable and explain <i>why</i> (not just “you lose”).</div>
-          </div>
-        </details>
-      </section>
-
-        <section class="card" id="n8n-section">
-        <details open>
-          <summary>
-            <h2 data-i18n="n8n_title">n8n Gamification Engine</h2>
-          </summary>
-          <div class="note" style="margin-top: 10px;" data-i18n="n8n_desc">The current site is a Minimum Viable Product.
-            The n8n process will
-            augment this by bridging Enterprise Content Management with Generative AI and Gamification.</div>
-          <a href="n8n_architecture.md" class="game-btn secondary"
-            style="display:inline-block; text-align:center; box-sizing: border-box; margin-top: 12px; margin-bottom: 10px; color: var(--accent); width: 100%;"
-            data-i18n="n8n_link">View
-            Architecture Proposal</a>
-        </details>
-
-        <details>
-          <summary>
-            <h2>Suggested next files</h2>
-          </summary>
-          <img src="assets/banner_next_files.png" data-src-en="assets/banner_next_files.png"
-            data-src-fr="assets/fr_banner_files.png" alt="Nano Banana Next Files" class="banner-image">
-          <div class="note">If this repo stays tiny, these are the pieces that make it feel “real” fast.</div>
-          <ol>
-            <li><code>scenarios/</code> — sample adventures (phishing, USB drop, password reset, insider risk).</li>
-            <li><code>schema.json</code> — JSON Schema for node/graph validation.</li>
-            <li><code>compiler.js</code> — parse → normalize graph.</li>
-            <li><code>validator.js</code> — structural + semantic checks.</li>
-            <li><code>runner.js</code> — applies effects, records transcript.</li>
-          </ol>
-        </details>
-
-        <details>
-          <summary>
-            <h3>Open questions</h3>
-          </summary>
-          <img src="assets/banner_questions.png" data-src-en="assets/banner_questions.png"
-            data-src-fr="assets/fr_banner_questions.png" alt="Nano Banana Open Questions" class="banner-image">
-          <ul>
-            <li>Primary authoring format: markdown, yaml, or json?</li>
-            <li>Do we allow cycles/loops ("investigate more")?</li>
-            <li>Do we track state as numeric risk, flags, inventory… or all three?</li>
-          </ul>
-        </details>
-
-        <p class="note">Refactoring reality one quanta at a time</p>
-      </section>
-
-        <!-- Ishikawa (Fishbone) Discovery Integration -->
-        <section class="card" id="ishikawa-discovery">
-          <h2 data-i18n="ishikawa_title" style="margin-top:0;">Ishikawa (Fishbone) Discovery Phase</h2>
-          <div class="note" style="margin-bottom: 12px;" data-i18n="ishikawa_desc">
-            Vulnerability mapping phase: Add or remove root causes under each of the 6M categories to customize the diagram.
-          </div>
-          
-          <div class="fishbone-canvas-container" id="fishbone-container">
-            <canvas id="fishboneCanvas" width="1600" height="900"></canvas>
-            <button class="close-fullscreen-btn" onclick="toggleFishboneFullscreen()" title="Close Fullscreen">×</button>
-            <button class="fullscreen-btn" onclick="toggleFishboneFullscreen()" title="Toggle Fullscreen">🔍</button>
-          </div>
-          
-          <div class="fishbone-controls">
-            <div class="fishbone-inputs-grid" id="fishbone-inputs">
-              <!-- Dynamically generated inputs -->
-            </div>
-            <div class="fishbone-actions" style="margin-top: 20px; display: flex; gap: 10px;">
-              <button class="game-btn" onclick="resetFishboneToDefault()">Reset Defaults</button>
-              <button class="game-btn secondary" onclick="exportFishboneDiagram()">Download PNG</button>
-            </div>
-          </div>
-        </section>
-
         <footer>
           Generated as an overview index page. Repo: <a href="https://github.com/polerix/security-adventure">polerix/security-adventure</a>
         </footer>
@@ -1409,7 +1044,7 @@
         nav_adventure: "choose-your-own-adventure",
         nav_training: "security training",
         nav_process: "processor + renderer",
-        hero_sub: "A small “what-if” engine for security stories: write scenarios as structured nodes, compile them, validate them, and run them as a playable adventure (web, CLI, or both).",
+        hero_sub: "A small â€œwhat-ifâ€ engine for security stories: write scenarios as structured nodes, compile them, validate them, and run them as a playable adventure (web, CLI, or both).",
         mod1_title: "Module 1",
         mod1_desc: "The Curious Case of the Lost Drive",
         mod2_title: "Module 2",
@@ -1425,21 +1060,21 @@
       },
       fr: {
         nav_adventure: "choisissez-votre-aventure",
-        nav_training: "formation en sécurité",
+        nav_training: "formation en sÃ©curitÃ©",
         nav_process: "processeur + moteur de rendu",
-        hero_sub: "Un petit moteur « et si » pour les histoires de sécurité : écrivez des scénarios comme des nœuds structurés, compilez-les, validez-les et exécutez-les comme une aventure jouable (web, console, ou les deux).",
+        hero_sub: "Un petit moteur Â« et si Â» pour les histoires de sÃ©curitÃ© : Ã©crivez des scÃ©narios comme des nÅ“uds structurÃ©s, compilez-les, validez-les et exÃ©cutez-les comme une aventure jouable (web, console, ou les deux).",
         mod1_title: "Module 1",
-        mod1_desc: "L'Étrange Affaire de la Clé USB Perdue",
+        mod1_desc: "L'Ã‰trange Affaire de la ClÃ© USB Perdue",
         mod2_title: "Module 2",
         mod2_desc: "Le Dilemme de la Porte",
-        placeholder: "Sélectionnez un module de formation ci-dessus pour commencer.",
+        placeholder: "SÃ©lectionnez un module de formation ci-dessus pour commencer.",
         n8n_title: "Moteur de Ludification n8n",
-        n8n_desc: "Le site actuel est un Produit Minimum Viable. Le processus n8n viendra l'augmenter en reliant la Gestion de Contenu d'Entreprise à l'IA Générative et à la Ludification.",
+        n8n_desc: "Le site actuel est un Produit Minimum Viable. Le processus n8n viendra l'augmenter en reliant la Gestion de Contenu d'Entreprise Ã  l'IA GÃ©nÃ©rative et Ã  la Ludification.",
         n8n_link: "Voir la proposition d'architecture",
-        app_title: "Aventure de Sécurité",
-        step_by_step_title: "Processus étape par étape (proposé)",
-        ishikawa_title: "Phase de Découverte d'Ishikawa (Diagramme en Poisson)",
-        ishikawa_desc: "Phase de cartographie des vulnérabilités : Ajoutez ou supprimez des causes sous chacune des catégories 6M pour personnaliser le diagramme."
+        app_title: "Aventure de SÃ©curitÃ©",
+        step_by_step_title: "Processus Ã©tape par Ã©tape (proposÃ©)",
+        ishikawa_title: "Phase de DÃ©couverte d'Ishikawa (Diagramme en Poisson)",
+        ishikawa_desc: "Phase de cartographie des vulnÃ©rabilitÃ©s : Ajoutez ou supprimez des causes sous chacune des catÃ©gories 6M pour personnaliser le diagramme."
       }
     };
 
@@ -1629,9 +1264,9 @@
           environment: 'Environment'
         },
         fr: {
-          men: "Main-d'œuvre (Gens)",
-          methods: 'Méthodes',
-          materials: 'Matières',
+          men: "Main-d'Å“uvre (Gens)",
+          methods: 'MÃ©thodes',
+          materials: 'MatiÃ¨res',
           machines: 'Machines',
           measurement: 'Mesures',
           environment: 'Milieu (Env)'
@@ -1652,7 +1287,7 @@
         const inputsHTML = causes.map((cause, idx) => `
           <div class="cause-input">
             <input type="text" value="${escapeHtml(cause)}" oninput="updateFishboneCause('${cat.key}', ${idx}, this.value)" placeholder="Enter cause...">
-            <button class="remove-btn" onclick="removeFishboneCause('${cat.key}', ${idx})">×</button>
+            <button class="remove-btn" onclick="removeFishboneCause('${cat.key}', ${idx})">Ã—</button>
           </div>
         `).join('');
 
@@ -1745,7 +1380,7 @@
       ctx.textBaseline = 'middle';
       
       const currentLang = localStorage.getItem('sa-lang') || 'en';
-      const problemText = currentLang === 'fr' ? 'Vulnérabilités de Sécurité' : 'Security Vulnerabilities';
+      const problemText = currentLang === 'fr' ? 'VulnÃ©rabilitÃ©s de SÃ©curitÃ©' : 'Security Vulnerabilities';
       ctx.fillText(problemText, headX + headW/2, centerY);
       
       // Category Labels in localized format
@@ -1759,9 +1394,9 @@
           environment: 'Environment'
         },
         fr: {
-          men: "Main-d'œuvre",
-          methods: 'Méthodes',
-          materials: 'Matières',
+          men: "Main-d'Å“uvre",
+          methods: 'MÃ©thodes',
+          materials: 'MatiÃ¨res',
           machines: 'Machines',
           measurement: 'Mesures',
           environment: 'Milieu'
@@ -1852,3 +1487,5 @@
 </body>
 
 </html>
+
+
